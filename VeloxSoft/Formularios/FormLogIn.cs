@@ -6,15 +6,21 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using VeloxSoft.Services;
+using VeloxSoft.Config;
+using VeloxSoft.Models;
 
 namespace VeloxSoft.Formularios
 {
     public partial class FormLogIn : Form
     {
-        public FormLogIn()
+        private readonly AutenticarUsuario _autenticarUsuario;
+
+        public FormLogIn(AutenticarUsuario autenticarUsuario)
         {
             InitializeComponent();
             LabelSalir.BringToFront();
+            _autenticarUsuario = autenticarUsuario;
         }
 
         [DllImport("user32.DLL", EntryPoint = "ReleaseCapture")]
@@ -33,6 +39,7 @@ namespace VeloxSoft.Formularios
             TxtUsuario.Clear();
             TxtPassword.Clear();
             TxtUsuario.Focus();
+            LabelError.Visible = false;
         }
 
         private void LabelSalir_Click(object sender, EventArgs e)
@@ -48,8 +55,49 @@ namespace VeloxSoft.Formularios
 
         private void LogInButton_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            Usuario usuario = new Usuario();
+            LabelError.Text = string.Empty; 
+            string errorMessage = null;
+            string Id = TxtUsuario.Text;
+            string Password = TxtPassword.Text;
+           
+            if (Id != string.Empty && Password != string.Empty)
+            {
+                usuario = _autenticarUsuario.Autenticar(Id, Password, out errorMessage);
+            }
+
+
+            if (Id.Length != 10)
+            {
+                LabelError.Text = "El ID debe tener exactamente 10 caracteres.";
+                LabelError.Visible = true;
+                return;
+            }
+
+            if (usuario.Nombre != "Error")
+            {
+                Program.UsuarioLogueado = usuario;
+                Program.RolActual = ObtenerRolEnum.ObtenerRol(usuario.Rol);
+
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            }
+            else
+            {
+                LabelError.Text = errorMessage;
+                LabelError.Visible = true;
+            }
+        }
+
+        private void NavPanel_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void TxtUsuario_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
+                e.Handled = true;
         }
     }
 }

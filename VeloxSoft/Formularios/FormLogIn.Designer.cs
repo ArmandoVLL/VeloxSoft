@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             NavPanel = new Panel();
+            LabelError = new Label();
             LabelLimpiar = new Label();
             TxtPassword = new TextBox();
             TxtUsuario = new TextBox();
@@ -49,6 +50,7 @@
             // 
             // NavPanel
             // 
+            NavPanel.Controls.Add(LabelError);
             NavPanel.Controls.Add(LabelLimpiar);
             NavPanel.Controls.Add(TxtPassword);
             NavPanel.Controls.Add(TxtUsuario);
@@ -65,14 +67,27 @@
             NavPanel.Name = "NavPanel";
             NavPanel.Size = new Size(292, 446);
             NavPanel.TabIndex = 7;
+            NavPanel.Paint += NavPanel_Paint;
             NavPanel.MouseDown += NavPanel_MouseDown;
+            // 
+            // LabelError
+            // 
+            LabelError.Dock = DockStyle.Bottom;
+            LabelError.ForeColor = Color.Red;
+            LabelError.Location = new Point(0, 423);
+            LabelError.Name = "LabelError";
+            LabelError.Size = new Size(292, 23);
+            LabelError.TabIndex = 73;
+            LabelError.Text = "nada";
+            LabelError.TextAlign = ContentAlignment.TopCenter;
+            LabelError.Visible = false;
             // 
             // LabelLimpiar
             // 
             LabelLimpiar.AutoSize = true;
             LabelLimpiar.Cursor = Cursors.Hand;
             LabelLimpiar.Font = new Font("Century Gothic", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            LabelLimpiar.ForeColor = Color.FromArgb(10, 80, 17);
+            LabelLimpiar.ForeColor = Color.White;
             LabelLimpiar.Location = new Point(200, 319);
             LabelLimpiar.Name = "LabelLimpiar";
             LabelLimpiar.Size = new Size(56, 16);
@@ -85,10 +100,12 @@
             TxtPassword.BackColor = Color.FromArgb(10, 34, 17);
             TxtPassword.BorderStyle = BorderStyle.None;
             TxtPassword.Font = new Font("Century Gothic", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            TxtPassword.ForeColor = Color.FromArgb(10, 80, 17);
+            TxtPassword.ForeColor = Color.White;
             TxtPassword.Location = new Point(48, 275);
+            TxtPassword.MaxLength = 3000;
             TxtPassword.Multiline = true;
             TxtPassword.Name = "TxtPassword";
+            TxtPassword.PasswordChar = '*';
             TxtPassword.Size = new Size(205, 24);
             TxtPassword.TabIndex = 70;
             // 
@@ -97,12 +114,14 @@
             TxtUsuario.BackColor = Color.FromArgb(10, 34, 17);
             TxtUsuario.BorderStyle = BorderStyle.None;
             TxtUsuario.Font = new Font("Century Gothic", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            TxtUsuario.ForeColor = Color.FromArgb(10, 80, 17);
+            TxtUsuario.ForeColor = Color.White;
             TxtUsuario.Location = new Point(48, 207);
+            TxtUsuario.MaxLength = 10;
             TxtUsuario.Multiline = true;
             TxtUsuario.Name = "TxtUsuario";
             TxtUsuario.Size = new Size(205, 24);
             TxtUsuario.TabIndex = 69;
+            TxtUsuario.KeyPress += TxtUsuario_KeyPress;
             // 
             // LogInButton
             // 
@@ -188,7 +207,7 @@
             LabelSalir.AutoSize = true;
             LabelSalir.Cursor = Cursors.Hand;
             LabelSalir.Font = new Font("Century Gothic", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            LabelSalir.ForeColor = Color.FromArgb(10, 80, 17);
+            LabelSalir.ForeColor = Color.White;
             LabelSalir.Location = new Point(117, 385);
             LabelSalir.Name = "LabelSalir";
             LabelSalir.Size = new Size(36, 16);
@@ -229,5 +248,6 @@
         private Label TxtLogIn;
         private PictureBox pictureBox1;
         private Label LabelSalir;
+        private Label LabelError;
     }
 }
