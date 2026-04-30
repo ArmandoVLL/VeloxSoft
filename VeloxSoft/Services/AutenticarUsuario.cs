@@ -53,7 +53,7 @@ namespace VeloxSoft.Services
 
                 string hash = parts[1];
 
-                MessageBox.Show(HashPassword(password), hash);
+                
 
                 if (!VerifyPassword(password, hash))
                 {

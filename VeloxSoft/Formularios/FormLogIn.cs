@@ -39,6 +39,7 @@ namespace VeloxSoft.Formularios
             TxtUsuario.Clear();
             TxtPassword.Clear();
             TxtUsuario.Focus();
+            LabelError.Visible = false;
         }
 
         private void LabelSalir_Click(object sender, EventArgs e)
@@ -55,29 +56,51 @@ namespace VeloxSoft.Formularios
         private void LogInButton_Click(object sender, EventArgs e)
         {
             Usuario usuario = new Usuario();
-            string errorMessage;
+            LabelError.Text = string.Empty;
+            string errorMessage = null;
             string Id = TxtUsuario.Text;
             string Password = TxtPassword.Text;
-            MessageBox.Show("Se dio click en el boton", "Click");
+
             if (Id != string.Empty && Password != string.Empty)
             {
                 usuario = _autenticarUsuario.Autenticar(Id, Password, out errorMessage);
             }
 
 
+            if (Id.Length != 10)
+            {
+                LabelError.Text = "El ID debe tener exactamente 10 caracteres.";
+                LabelError.Visible = true;
+                return;
+            }
+
             if (usuario.Nombre != "Error")
             {
-                MessageBox.Show("Inicio ", "ta bn");
                 Program.UsuarioLogueado = usuario;
                 Program.RolActual = ObtenerRolEnum.ObtenerRol(usuario.Rol);
 
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
-
+            else
+            {
+                LabelError.Text = errorMessage;
+                LabelError.Visible = true;
+            }
         }
 
         private void NavPanel_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void TxtUsuario_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
+                e.Handled = true;
+        }
+
+        private void TxtUsuario_TextChanged(object sender, EventArgs e)
         {
 
         }
