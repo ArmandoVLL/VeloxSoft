@@ -20,6 +20,7 @@ namespace VeloxSoft.Formularios
 
             // Evita el efecto de "congelado" o parpadeo
             this.DoubleBuffered = true;
+            this.Load += FormInventario_Load; // ← agrega esto
         }
 
         //BORDES REDONDOS PARA LOS PANEL, SOLO LO LLAMAMOS EN LOS EVENTOS PAINT DE LOS PANEL, ASÍ SE DIBUJAN LOS BORDES CUANDO SE REDIMENSIONA LA VENTANA
@@ -162,10 +163,145 @@ namespace VeloxSoft.Formularios
 
         private void pnlDetalles_Resize(object sender, EventArgs e)
         {
+            int w = pnlDetalles.Width;
+            int h = pnlDetalles.Height;
+
+            int margenIzq = 20;
+            int xInput = (int)(w * 0.40);
+            int anchoInput = w - xInput - 20;
+
+            // TÍTULO
+            lbTitulo.Location = new Point(margenIzq, 15);
+            lbTitulo.Size = new Size(w - 40, 40);
+
+            // BUSCAR ID
+            int yID = (int)(h * 0.12);
+            lblID.Location = new Point(margenIzq, yID + 12);
+            panel1.Location = new Point(xInput, yID);
+            panel1.Size = new Size(anchoInput - 95, 45);
+            textID.Location = new Point(5, 12);
+            textID.Size = new Size(panel1.Width - 10, 22);
+            btnBuscar.Location = new Point(xInput + anchoInput - 90, yID);
+            btnBuscar.Size = new Size(90, 45);
+
+            // NOMBRE
+            int yNombre = (int)(h * 0.25);
+            lblNombre.Location = new Point(margenIzq, yNombre + 12);
+            pnlNombre.Location = new Point(xInput, yNombre);
+            pnlNombre.Size = new Size(anchoInput, 45);
+            textNombre.Location = new Point(5, 12);
+            textNombre.Size = new Size(pnlNombre.Width - 10, 22);
+
+            // PRECIO DE COMPRA
+            int yPC = (int)(h * 0.38);
+            lblPrecioC.Location = new Point(margenIzq, yPC + 12);
+            pnlPC.Location = new Point(xInput, yPC);
+            pnlPC.Size = new Size(anchoInput, 45);
+            textPC.Location = new Point(5, 12);
+            textPC.Size = new Size(pnlPC.Width - 10, 22);
+
+            // PRECIO DE VENTA
+            int yPV = (int)(h * 0.51);
+            lblVenta.Location = new Point(margenIzq, yPV + 12);
+            pnlPV.Location = new Point(xInput, yPV);
+            pnlPV.Size = new Size(anchoInput, 45);
+            textPV.Location = new Point(5, 12);
+            textPV.Size = new Size(pnlPV.Width - 10, 22);
+
+            // EN STOCK
+            int yStock = (int)(h * 0.64);
+            lblStock.Location = new Point(margenIzq, yStock + 12);
+            pnlStock.Location = new Point(xInput, yStock);
+            pnlStock.Size = new Size(anchoInput, 45);
+            textStock.Location = new Point(5, 12);
+            textStock.Size = new Size(pnlStock.Width - 10, 22);
+
+            // BOTONES
+            int yBotones = (int)(h * 0.82);
+            int anchoBtn = (int)(w * 0.25);
+            int espacioBtn = (int)(w * 0.03);
+            btnNuevo.Location = new Point(margenIzq, yBotones);
+            btnNuevo.Size = new Size(anchoBtn, 45);
+            btnGuardar.Location = new Point(margenIzq + anchoBtn + espacioBtn, yBotones);
+            btnGuardar.Size = new Size(anchoBtn, 45);
+            btnEliminar.Location = new Point(margenIzq + (anchoBtn + espacioBtn) * 2, yBotones);
+            btnEliminar.Size = new Size(anchoBtn, 45);
+
             pnlDetalles.Invalidate();
         }
 
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+        private void FormInventario_Load(object sender, EventArgs e)
+        {
+            pnlDetalles_Resize(this, EventArgs.Empty);
+            pnlBD_Resize(this, EventArgs.Empty);  // ← AGREGA ESTO
+            CargarDatosPrueba();                   // ← AGREGA ESTO
+
+        }
+        private void CargarDatosPrueba()
+        {
+            dtgBDInv.Rows.Clear();
+            dtgBDInv.Rows.Add("MZR01", "Manzana Roja", "Frutas", 150, "$25", "$15");
+            dtgBDInv.Rows.Add("MZR02", "Manzana Verde", "Frutas", 30, "$25");
+            dtgBDInv.Rows.Add("TMV03", "Tomate Verde", "Verduras", 20, "$18");
+            dtgBDInv.Rows.Add("TMV06", "Tomate Roja", "Verduras", 20, "$25");
+            dtgBDInv.Rows.Add("TMV07", "Limón", "Frutas", 10, "$25");
+        }
+
+        private void pnlBD_Paint(object sender, PaintEventArgs e)
+        {
+            RedondearPanel((Panel)sender, e, 15);
+        }
+
+        private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void tbBuscarBD_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pnlBuscarBD_Paint(object sender, PaintEventArgs e)
+        {
+            RedondearPanel((Panel)sender, e, 15);
+        }
+
+        private void btnGuardarBD_Paint(object sender, PaintEventArgs e)
+        {
+            RedondearBoton(btnGuardarBD, e, 15);
+        }
+
+        private void pnlBD_Resize(object sender, EventArgs e)
+        {
+            int w = pnlBD.Width;
+            int h = pnlBD.Height;
+
+            Titulo.Location = new Point(17, 12);
+            Titulo.Size = new Size(w - 30, 40);
+
+            BuscarBD.Location = new Point(17, 70);
+
+            pnlBuscarBD.Location = new Point(170, 60);
+            pnlBuscarBD.Size = new Size(w - 320, 45);
+            tbBuscarBD.Size = new Size(pnlBuscarBD.Width - 10, 25);
+            tbBuscarBD.Location = new Point(5, 10);
+
+            btnGuardarBD.Location = new Point(pnlBuscarBD.Right + 8, 60);
+            btnGuardarBD.Size = new Size(w - pnlBuscarBD.Right - 25, 45);
+
+            dtgBDInv.Location = new Point(11, 120);
+            dtgBDInv.Size = new Size(w - 22, h - 135);
+
+            pnlBD.Invalidate();
+
+        }
+
+        private void lblID_Click(object sender, EventArgs e)
         {
 
         }

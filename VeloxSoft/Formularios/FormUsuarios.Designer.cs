@@ -61,7 +61,7 @@
             pnlUsuarios.Dock = DockStyle.Fill;
             pnlUsuarios.Location = new Point(0, 0);
             pnlUsuarios.Name = "pnlUsuarios";
-            pnlUsuarios.Size = new Size(1167, 696);
+            pnlUsuarios.Size = new Size(1084, 538);
             pnlUsuarios.TabIndex = 0;
             pnlUsuarios.Resize += pnlUsuarios_Resize;
             // 
@@ -79,17 +79,17 @@
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(1167, 696);
+            tableLayoutPanel1.Size = new Size(1084, 538);
             tableLayoutPanel1.TabIndex = 5;
             // 
             // pnlLista
             // 
             pnlLista.BackColor = Color.FromArgb(192, 255, 192);
             pnlLista.Dock = DockStyle.Fill;
-            pnlLista.Location = new Point(787, 53);
+            pnlLista.Location = new Point(733, 53);
             pnlLista.Margin = new Padding(29, 53, 29, 267);
             pnlLista.Name = "pnlLista";
-            pnlLista.Size = new Size(351, 376);
+            pnlLista.Size = new Size(322, 218);
             pnlLista.TabIndex = 4;
             pnlLista.Paint += pnlLista_Paint;
             // 
@@ -112,7 +112,7 @@
             pnlDetalles.Location = new Point(23, 27);
             pnlDetalles.Margin = new Padding(23, 27, 23, 27);
             pnlDetalles.Name = "pnlDetalles";
-            pnlDetalles.Size = new Size(712, 642);
+            pnlDetalles.Size = new Size(658, 484);
             pnlDetalles.TabIndex = 2;
             pnlDetalles.Paint += pnlDetalles_Paint;
             // 
@@ -311,7 +311,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1167, 696);
+            ClientSize = new Size(1084, 538);
             Controls.Add(pnlUsuarios);
             Name = "FormUsuarios";
             Text = "Testt";

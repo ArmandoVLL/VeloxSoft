@@ -36,6 +36,8 @@ namespace VeloxSoft
             this.ControlBox = false; // Quita los botones cerrar/min/max estándar
             this.DoubleBuffered = true; // Evita el parpadeo al redimensionar
             this.MaximizedBounds = Screen.FromHandle(this.Handle).WorkingArea;
+
+
         }
 
         private void ActivateButton(object senderBtn, Color color)
@@ -90,23 +92,21 @@ namespace VeloxSoft
 
         private struct RGBColors
         {
-            // Colores personalizados para los botones seleccionados
-            public static Color color1 = Color.FromArgb(16, 53, 34);
-            public static Color color2 = Color.FromArgb(173, 171, 53);
-            public static Color color3 = Color.FromArgb(243, 243, 233);
-            public static Color color4 = Color.FromArgb(221, 62, 41);
-            public static Color color5 = Color.FromArgb(155, 190, 171);
-            public static Color color6 = Color.FromArgb(190, 169, 114);
-            public static Color color7 = Color.FromArgb(1, 178, 126);
-            // Color de fondo para los botones activos y cambio de color en otros elementos
-            public static Color backColor1 = Color.FromArgb(191, 230, 99);
+            public static Color color1 = Color.FromArgb(27, 67, 50);     // Verde oscuro principal
+            public static Color color2 = Color.FromArgb(82, 183, 136);   // Verde medio (Inventario)
+            public static Color color3 = Color.FromArgb(247, 250, 248);  // Neutro claro (Clientes)
+            public static Color color4 = Color.FromArgb(230, 57, 70);    // Rojo eliminar (Ventas)
+            public static Color color5 = Color.FromArgb(45, 106, 79);    // Verde acento (Gastos)
+            public static Color color6 = Color.FromArgb(149, 213, 178);  // Verde claro (Corte)
+            public static Color color7 = Color.FromArgb(82, 183, 136);   // Verde medio (Caja)
+            public static Color backColor1 = Color.FromArgb(27, 67, 50); // Fondo activo
         }
 
         private void DisableButton()
         {
             if (currentBtn != null)
             {
-                currentBtn.BackColor = Color.FromArgb(68, 154, 2);
+                currentBtn.BackColor = Color.FromArgb(45, 106, 79);  // era (68, 154, 2)
                 currentBtn.ForeColor = Color.Gainsboro;
                 currentBtn.TextAlign = ContentAlignment.MiddleLeft;
                 currentBtn.IconColor = Color.Gainsboro;
@@ -173,14 +173,14 @@ namespace VeloxSoft
 
             iconCurrentChildForm.IconChar = IconChar.HomeUser;
             iconCurrentChildForm.IconColor = Color.Gainsboro;
-            iconCurrentChildForm.BackColor = Color.FromArgb(68, 154, 2);
+            iconCurrentChildForm.BackColor = Color.FromArgb(45, 106, 79);  // era (68, 154, 2)
 
             lblTitleChildForm.Text = "Home";
             lblTitleChildForm.ForeColor = Color.Gainsboro;
 
-            panelTitleBar.BackColor = Color.FromArgb(68, 154, 2);
+            panelTitleBar.BackColor = Color.FromArgb(45, 106, 79);  // era (68, 154, 2)
 
-            btnInicio.BackColor = Color.FromArgb(68, 154, 2);
+            btnInicio.BackColor = Color.FromArgb(45, 106, 79);  // era (68, 154, 2)
         }
 
         [DllImport("user32.DLL", EntryPoint = "ReleaseCapture")]
