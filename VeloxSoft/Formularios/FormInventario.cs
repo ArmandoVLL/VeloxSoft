@@ -22,7 +22,7 @@ namespace VeloxSoft.Formularios
             // Evita el efecto de "congelado" o parpadeo
             this.DoubleBuffered = true;
 
-            
+
         }
 
         //BORDES REDONDOS PARA LOS PANEL, SOLO LO LLAMAMOS EN LOS EVENTOS PAINT DE LOS PANEL, ASÍ SE DIBUJAN LOS BORDES CUANDO SE REDIMENSIONA LA VENTANA
@@ -140,14 +140,71 @@ namespace VeloxSoft.Formularios
 
         private void btnGuardar_Click(object sender, EventArgs e)
         {
-            var lista = _ServicioInventario.Ver_Productos(out String errorMessage);
-
-            if (lista.Count == 0)
+            // 1. Validar que los campos no estén vacíos
+            if (string.IsNullOrWhiteSpace(textID.Text) ||
+                string.IsNullOrWhiteSpace(textNombre.Text) ||
+                string.IsNullOrWhiteSpace(textPV.Text) ||
+                string.IsNullOrWhiteSpace(textStock.Text))
             {
-                MessageBox.Show("No hay productos activos.");
+                LabelError2.Text = "Todos los campos son obligatorios.";
+                LabelError2.Visible = true;
+                LabelError2.ForeColor = Color.Red;
                 return;
             }
 
+            // 2. Validar que precio y cantidad sean números
+            if (!decimal.TryParse(textPV.Text, out decimal precio))
+            {
+                LabelError2.Text = "El precio debe ser un número válido.";
+                LabelError2.ForeColor = Color.Red;
+                return;
+            }
+            if (!decimal.TryParse(textStock.Text, out decimal cantidad))
+            {
+                LabelError2.Text = "El stock debe ser un número válido.";
+                LabelError2.ForeColor = Color.Red;
+                return;
+            }
+
+            // 3. Obtener categoría del ComboBox
+            if (BoxPrueba.SelectedItem == null)
+            {
+                LabelError2.Text = "Debe seleccionar una categoría.";
+                LabelError2.ForeColor = Color.Red;
+                LabelError2.Visible = true;
+                return;
+            }
+
+            string categoria = BoxPrueba.SelectedItem.ToString();
+            // DEBUG - borrar después
+            MessageBox.Show($"ID: {textID.Text.Trim()}\nNombre: {textNombre.Text.Trim()}\nCantidad: {cantidad}\nPrecio: {precio}\nCategoria: {categoria}");
+            
+            // 4. Llamar al servicio para insertar el producto
+            string mensaje = _ServicioInventario.Insertar_Producto(textID.Text.Trim(),textNombre.Text.Trim(),cantidad,precio,categoria,out string errorMessage);
+            
+            if (!string.IsNullOrEmpty(errorMessage))
+            {
+                LabelError2.Text = errorMessage;
+                LabelError2.Visible = true;
+                LabelError2.ForeColor = Color.Red;
+                CargarInventario();
+                return;
+            }
+            else
+            {
+                
+                LabelError2.Text = mensaje; // "Producto agregado correctamente."
+                LabelError2.Visible = true;
+                LabelError2.ForeColor = Color.Green;
+                CargarInventario(); // Recarga la tabla para mostrar el nuevo producto
+
+                //Limpiamos los campos después de guardar
+                textID.Text = string.Empty;
+                textNombre.Text = string.Empty;
+                textPV.Text = string.Empty;
+                textStock.Text = string.Empty;
+                BoxPrueba.SelectedItem = null;
+            }
         }
 
         private void btnNuevo_Click(object sender, EventArgs e)
@@ -247,17 +304,33 @@ namespace VeloxSoft.Formularios
         {
             pnlDetalles_Resize(this, EventArgs.Empty);
             pnlBD_Resize(this, EventArgs.Empty);  // ← AGREGA ESTO
-            CargarDatosPrueba();                   // ← AGREGA ESTO
+            CargarInventario();                   // LLAMAMOS AL MÉTODO PARA CARGAR LOS DATOS DE PRUEBA EN LA TABLA, LUEGO LO ELIMINAMOS O LO MODIFICAMOS PARA QUE CARGUE LOS DATOS REALES DESDE LA BASE DE DATOS
 
         }
-        private void CargarDatosPrueba()
+        private void CargarInventario() // CON ESTE MÉTODO LLENAMOS LA TABLA CON DATOS DE PRUEBA PARA VER CÓMO QUEDA, LUEGO LO ELIMINAMOS O LO MODIFICAMOS PARA QUE CARGUE LOS DATOS REALES DESDE LA BASE DE DATOS
         {
-            dtgBDInv.Rows.Clear();
-            dtgBDInv.Rows.Add("MZR01", "Manzana Roja", "Frutas", 150, "$25", "$15");
-            dtgBDInv.Rows.Add("MZR02", "Manzana Verde", "Frutas", 30, "$25");
-            dtgBDInv.Rows.Add("TMV03", "Tomate Verde", "Verduras", 20, "$18");
-            dtgBDInv.Rows.Add("TMV06", "Tomate Roja", "Verduras", 20, "$25");
-            dtgBDInv.Rows.Add("TMV07", "Limón", "Frutas", 10, "$25");
+            var lista = _ServicioInventario.Ver_Productos(out String errorMessage);//OBTENEMOS LA LISTA DE PRODUCTOS DESDE EL SERVICIO DE INVENTARIO, SI OCURRE UN ERROR SE ASIGNA UN MENSAJE A errorMessage
+
+            if (!string.IsNullOrEmpty(errorMessage))
+            {
+                LabelError.Text = errorMessage;
+                LabelError.Visible = true;
+                return;
+            }
+
+            dtgBDInv.Rows.Clear(); // Limpio la tabla antes de cargar los datos
+
+            foreach (var producto in lista)
+            {
+                dtgBDInv.Rows.Add( //añade una nueva fila a la tabla con los datos del producto
+                    producto.IdProducto,
+                    producto.Nombre,
+                    producto.IdCategoria,
+                    producto.Cantidad,
+                    producto.Precio,
+                    producto.Estado ? "Activo" : "Inactivo");
+            }
+
         }
 
         private void pnlBD_Paint(object sender, PaintEventArgs e)
@@ -311,6 +384,11 @@ namespace VeloxSoft.Formularios
         }
 
         private void lblID_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnGuardar_MouseClick(object sender, MouseEventArgs e)
         {
 
         }

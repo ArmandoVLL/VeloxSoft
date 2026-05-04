@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using VeloxSoft.Config;
 using VeloxSoft.Models;
@@ -20,7 +21,7 @@ namespace VeloxSoft.Services
 
         public List<Producto> Ver_Productos(out String errorMessage)
         {
-            errorMessage = "null";
+            errorMessage = null;
             try
             {
                 var conn = new NpgsqlConnection(_dbConfig.GetConnection(Program.RolActual));
@@ -62,8 +63,45 @@ namespace VeloxSoft.Services
                 errorMessage = "Error inesperado"; //SE ASIGNA UN MENSAJE DE ERROR GENERICO A LA VARIABLE errorMessage, SE PODRIA MEJORAR ESTE MENSAJE PARA QUE SEA MAS ESPECIFICO DEPENDIENDO DEL CODIGO DE ERROR DE POSTGRESQL
                 return new List<Producto>(); //SE RETORNA UNA LISTA VACIA DE PRODUCTOS, SE PODRIA RETORNAR NULL O UNA EXCEPCION PERSONALIZADA DEPENDIENDO DE LA LOGICA DE NEGOCIO DE LA APLICACION
             }
-
-        
         }
+
+
+
+        public string Insertar_Producto(string idProducto, string nombre, decimal cantidad, decimal precio, string idCategoria, out string errorMessage)
+        {
+            errorMessage = null;
+            try
+            {
+                using var conn = new NpgsqlConnection(_dbConfig.GetConnection(Program.RolActual)); //SE CREA UNA CONEXION A LA BASE DE DATOS UTILIZANDO LA CONFIGURACION DE LA BASE DE DATOS Y EL ROL ACTUAL DEL USUARIO LOGUEADO, SE UTILIZA EL METODO GetConnection DE LA CLASE DatabaseConfig PARA OBTENER LA CADENA DE CONEXION CORRESPONDIENTE AL ROL ACTUAL
+                conn.Open();//
+
+                using var cmd = new NpgsqlCommand("SELECT insertar_producto(@id, @nombre, @cantidad, @precio, @idCategoria)", conn);
+                //SE CREA UN COMANDO PARA EJECUTAR LA FUNCION INSERTAR_PRODUCTO, SE PASAN LOS PARAMETROS NECESARIOS PARA LA FUNCION, SE UTILIZAN PARAMETROS EN LUGAR DE CONCATENAR LOS VALORES DIRECTAMENTE EN LA CONSULTA PARA EVITAR INYECCION SQL Y MEJORAR LA LEGIBILIDAD DEL CODIGO
+                cmd.Parameters.AddWithValue("id", idProducto); //EL ID DEL PRODUCTO SE PASA COMO PARAMETRO A LA FUNCION INSERTAR_PRODUCTO, SE UTILIZA EL NOMBRE DEL PARAMETRO DEFINIDO EN LA FUNCION (ID) Y SE ASIGNA EL VALOR DE LA VARIABLE idProducto QUE SE RECIBE COMO PARAMETRO EN EL METODO Insertar_Producto
+                cmd.Parameters.AddWithValue("nombre", nombre); //EL NOMBRE DEL PRODUCTO SE PASA COMO PARAMETRO A LA FUNCION INSERTAR_PRODUCTO, SE UTILIZA EL NOMBRE DEL PARAMETRO DEFINIDO EN LA FUNCION (NOMBRE) Y SE ASIGNA EL VALOR DE LA VARIABLE nombre QUE SE RECIBE COMO PARAMETRO EN EL METODO Insertar_Producto
+                cmd.Parameters.AddWithValue("cantidad", cantidad); //LA CANTIDAD DEL PRODUCTO SE PASA COMO PARAMETRO A LA FUNCION INSERTAR_PRODUCTO, SE UTILIZA EL NOMBRE DEL PARAMETRO DEFINIDO EN LA FUNCION (CANTIDAD) Y SE ASIGNA EL VALOR DE LA VARIABLE cantidad QUE SE RECIBE COMO PARAMETRO EN EL METODO Insertar_Producto
+                cmd.Parameters.AddWithValue("precio", precio);//EL PRECIO DEL PRODUCTO SE PASA COMO PARAMETRO A LA FUNCION INSERTAR_PRODUCTO, SE UTILIZA EL NOMBRE DEL PARAMETRO DEFINIDO EN LA FUNCION (PRECIO) Y SE ASIGNA EL VALOR DE LA VARIABLE precio QUE SE RECIBE COMO PARAMETRO EN EL METODO Insertar_Producto
+                cmd.Parameters.AddWithValue("idCategoria", idCategoria);//EL ID DE LA CATEGORIA SE PASA COMO PARAMETRO A LA FUNCION INSERTAR_PRODUCTO, SE UTILIZA EL NOMBRE DEL PARAMETRO DEFINIDO EN LA FUNCION (IDCATEGORIA) Y SE ASIGNA EL VALOR DE LA VARIABLE idCategoria QUE SE RECIBE COMO PARAMETRO EN EL METODO Insertar_Producto
+
+                string resultado = cmd.ExecuteScalar().ToString(); //EJECUTA LA CONSULTA Y OBTIENE EL RESULTADO DE LA FUNCION INSERTAR_PRODUCTO, SE CONVIERTE A STRING PARA RETORNARLO
+                var parts = resultado.Split('|');
+
+                if (parts[0] == "ERROR") //SI EL PRIMER ELEMENTO DEL RESULTADO ES "ERROR", SE ASIGNA EL SEGUNDO ELEMENTO DEL RESULTADO A LA VARIABLE errorMessage, Y SE RETORNA EL SEGUNDO ELEMENTO DEL RESULT
+                {
+                    errorMessage = parts[1]; //SE ASIGNA EL SEGUNDO ELEMENTO DEL RESULTADO A LA VARIABLE errorMessage
+                }
+                return parts[1]; //SE RETORNA EL SEGUNDO ELEMENTO DEL RESULTADO, SI EL PRIMER ELEMENTO ES "ERROR" SE RETORNA EL MENSAJE DE ERROR, SI EL PRIMER ELEMENTO NO ES "ERROR" SE RETORNA EL MENSAJE DE EXITO O CUALQUIER OTRO MENSAJE QUE LA FUNCION INSERTAR_PRODUCTO PUEDA RETORNAR
+            }
+            catch (PostgresException e) //SI OCURRE UN ERROR DE POSTGRESQL, SE CAPTURA LA EXCEPCION
+            {
+               return errorMessage = "Error de base de datos: "; //ERROR PARA SPLIT 
+            }
+            catch (Exception e)//SI OCURRE CUALQUIER OTRO TIPO DE EXCEPCION, SE CAPTURA
+            {
+                return errorMessage = "Error inesperado: "; //ERROR PARA SPLIT
+            }
+        }
+        
     }
 }
+
