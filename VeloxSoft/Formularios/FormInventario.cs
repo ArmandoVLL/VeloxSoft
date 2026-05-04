@@ -6,20 +6,23 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text;
 using System.Windows.Forms;
+using VeloxSoft.Services;
 
 namespace VeloxSoft.Formularios
 {
     public partial class FormInventario : Form
     {
-        public FormInventario()
+        private readonly ServicioInventario _ServicioInventario;
+        public FormInventario(ServicioInventario ServicioInventario)
         {
             InitializeComponent();
-
+            _ServicioInventario = ServicioInventario;
             // Esto obliga al formulario a redibujarse mientras el usuario arrastra el mouse
             this.ResizeRedraw = true;
-
             // Evita el efecto de "congelado" o parpadeo
             this.DoubleBuffered = true;
+
+            
         }
 
         //BORDES REDONDOS PARA LOS PANEL, SOLO LO LLAMAMOS EN LOS EVENTOS PAINT DE LOS PANEL, ASÍ SE DIBUJAN LOS BORDES CUANDO SE REDIMENSIONA LA VENTANA
@@ -137,7 +140,18 @@ namespace VeloxSoft.Formularios
 
         private void btnGuardar_Click(object sender, EventArgs e)
         {
+            var lista = _ServicioInventario.Ver_Productos(out String errorMessage);
 
+            if (lista.Count == 0)
+            {
+                MessageBox.Show("No hay productos activos.");
+                return;
+            }
+
+            foreach (var producto in lista)
+            {
+                MessageBox.Show($"ID: {producto.IdProducto}\nNombre: {producto.Nombre}\nCantidad: {producto.Cantidad}\nPrecio: {producto.Precio}\nCategoria: {producto.IdCategoria}");
+            }
         }
 
         private void btnNuevo_Click(object sender, EventArgs e)

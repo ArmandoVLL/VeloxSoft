@@ -30,15 +30,17 @@ namespace VeloxSoft
             // Creamos las instancias necesarias para los servicios.
             var dbConfig = new DatabaseConfig(config);
             var AutenticarUsuario = new AutenticarUsuario(dbConfig);
+            var ServicioInventario = new ServicioInventario(dbConfig);
 
             // Creamos el formulario de Login
             FormLogIn login = new FormLogIn(AutenticarUsuario);
+           
 
             // Si el Login se cierra con un resultado "OK", iniciamos el menú
             if (login.ShowDialog() == DialogResult.OK)
             {
-                Application.Run(new FormMainMenu());
+                Application.Run(new FormMainMenu(ServicioInventario));
             }
         }
-    }
+    }   
 }

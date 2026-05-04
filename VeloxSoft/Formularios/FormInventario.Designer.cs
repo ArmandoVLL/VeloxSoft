@@ -67,9 +67,8 @@
             pnlFondo.Controls.Add(tableLayoutPanel1);
             pnlFondo.Dock = DockStyle.Fill;
             pnlFondo.Location = new Point(0, 0);
-            pnlFondo.Margin = new Padding(3, 4, 3, 4);
             pnlFondo.Name = "pnlFondo";
-            pnlFondo.Size = new Size(1394, 795);
+            pnlFondo.Size = new Size(1199, 562);
             pnlFondo.TabIndex = 0;
             // 
             // tableLayoutPanel1
@@ -80,11 +79,10 @@
             tableLayoutPanel1.Controls.Add(pnlDetalles, 0, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
-            tableLayoutPanel1.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(1394, 795);
+            tableLayoutPanel1.Size = new Size(1199, 562);
             tableLayoutPanel1.TabIndex = 0;
             tableLayoutPanel1.Paint += tableLayoutPanel1_Paint;
             // 
@@ -107,10 +105,9 @@
             pnlDetalles.Controls.Add(lblID);
             pnlDetalles.Controls.Add(lbTitulo);
             pnlDetalles.Dock = DockStyle.Fill;
-            pnlDetalles.Location = new Point(3, 4);
-            pnlDetalles.Margin = new Padding(3, 4, 3, 4);
+            pnlDetalles.Location = new Point(3, 3);
             pnlDetalles.Name = "pnlDetalles";
-            pnlDetalles.Size = new Size(760, 787);
+            pnlDetalles.Size = new Size(653, 556);
             pnlDetalles.TabIndex = 0;
             pnlDetalles.Paint += pnlDetalles_Paint;
             pnlDetalles.Resize += pnlDetalles_Resize;
@@ -119,10 +116,9 @@
             // 
             pnlPV.BackColor = Color.White;
             pnlPV.Controls.Add(textPV);
-            pnlPV.Location = new Point(257, 287);
-            pnlPV.Margin = new Padding(3, 4, 3, 4);
+            pnlPV.Location = new Point(225, 215);
             pnlPV.Name = "pnlPV";
-            pnlPV.Size = new Size(250, 49);
+            pnlPV.Size = new Size(219, 37);
             pnlPV.TabIndex = 24;
             pnlPV.Paint += pnlPV_Paint;
             // 
@@ -130,10 +126,9 @@
             // 
             textPV.BorderStyle = BorderStyle.None;
             textPV.Cursor = Cursors.IBeam;
-            textPV.Location = new Point(3, 15);
-            textPV.Margin = new Padding(3, 4, 3, 4);
+            textPV.Location = new Point(3, 11);
             textPV.Name = "textPV";
-            textPV.Size = new Size(243, 20);
+            textPV.Size = new Size(213, 16);
             textPV.TabIndex = 0;
             textPV.TextChanged += textPV_TextChanged;
             // 
@@ -141,9 +136,9 @@
             // 
             lblVenta.AutoSize = true;
             lblVenta.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblVenta.Location = new Point(3, 303);
+            lblVenta.Location = new Point(3, 227);
             lblVenta.Name = "lblVenta";
-            lblVenta.Size = new Size(228, 32);
+            lblVenta.Size = new Size(178, 25);
             lblVenta.TabIndex = 23;
             lblVenta.Text = "PRECIO DE VENTA:";
             lblVenta.Click += label1_Click_1;
@@ -160,10 +155,9 @@
             btnEliminar.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnEliminar.IconSize = 20;
             btnEliminar.ImageAlign = ContentAlignment.BottomLeft;
-            btnEliminar.Location = new Point(447, 465);
-            btnEliminar.Margin = new Padding(3, 4, 3, 4);
+            btnEliminar.Location = new Point(391, 349);
             btnEliminar.Name = "btnEliminar";
-            btnEliminar.Size = new Size(119, 41);
+            btnEliminar.Size = new Size(104, 31);
             btnEliminar.TabIndex = 22;
             btnEliminar.Text = "ELIMINAR";
             btnEliminar.UseVisualStyleBackColor = false;
@@ -182,10 +176,9 @@
             btnGuardar.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnGuardar.IconSize = 20;
             btnGuardar.ImageAlign = ContentAlignment.BottomLeft;
-            btnGuardar.Location = new Point(241, 465);
-            btnGuardar.Margin = new Padding(3, 4, 3, 4);
+            btnGuardar.Location = new Point(211, 349);
             btnGuardar.Name = "btnGuardar";
-            btnGuardar.Size = new Size(119, 41);
+            btnGuardar.Size = new Size(104, 31);
             btnGuardar.TabIndex = 21;
             btnGuardar.Text = "GUARDAR";
             btnGuardar.UseVisualStyleBackColor = false;
@@ -204,10 +197,9 @@
             btnNuevo.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnNuevo.IconSize = 20;
             btnNuevo.ImageAlign = ContentAlignment.BottomLeft;
-            btnNuevo.Location = new Point(24, 465);
-            btnNuevo.Margin = new Padding(3, 4, 3, 4);
+            btnNuevo.Location = new Point(21, 349);
             btnNuevo.Name = "btnNuevo";
-            btnNuevo.Size = new Size(119, 41);
+            btnNuevo.Size = new Size(104, 31);
             btnNuevo.TabIndex = 20;
             btnNuevo.Text = "NUEVO";
             btnNuevo.UseVisualStyleBackColor = false;
@@ -218,10 +210,9 @@
             // 
             pnlStock.BackColor = Color.White;
             pnlStock.Controls.Add(textStock);
-            pnlStock.Location = new Point(157, 363);
-            pnlStock.Margin = new Padding(3, 4, 3, 4);
+            pnlStock.Location = new Point(137, 272);
             pnlStock.Name = "pnlStock";
-            pnlStock.Size = new Size(351, 45);
+            pnlStock.Size = new Size(307, 34);
             pnlStock.TabIndex = 19;
             pnlStock.Paint += pnlStock_Paint;
             // 
@@ -229,19 +220,18 @@
             // 
             textStock.BorderStyle = BorderStyle.None;
             textStock.Cursor = Cursors.IBeam;
-            textStock.Location = new Point(3, 12);
-            textStock.Margin = new Padding(3, 4, 3, 4);
+            textStock.Location = new Point(3, 9);
             textStock.Name = "textStock";
-            textStock.Size = new Size(243, 20);
+            textStock.Size = new Size(213, 16);
             textStock.TabIndex = 1;
             // 
             // lblStock
             // 
             lblStock.AutoSize = true;
             lblStock.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblStock.Location = new Point(10, 363);
+            lblStock.Location = new Point(9, 272);
             lblStock.Name = "lblStock";
-            lblStock.Size = new Size(135, 32);
+            lblStock.Size = new Size(106, 25);
             lblStock.TabIndex = 18;
             lblStock.Text = "EN STOCK:";
             // 
@@ -249,10 +239,9 @@
             // 
             pnlPC.BackColor = Color.White;
             pnlPC.Controls.Add(textPC);
-            pnlPC.Location = new Point(257, 217);
-            pnlPC.Margin = new Padding(3, 4, 3, 4);
+            pnlPC.Location = new Point(225, 163);
             pnlPC.Name = "pnlPC";
-            pnlPC.Size = new Size(250, 49);
+            pnlPC.Size = new Size(219, 37);
             pnlPC.TabIndex = 17;
             pnlPC.Paint += pnlPC_Paint;
             // 
@@ -260,19 +249,18 @@
             // 
             textPC.BorderStyle = BorderStyle.None;
             textPC.Cursor = Cursors.IBeam;
-            textPC.Location = new Point(3, 15);
-            textPC.Margin = new Padding(3, 4, 3, 4);
+            textPC.Location = new Point(3, 11);
             textPC.Name = "textPC";
-            textPC.Size = new Size(243, 20);
+            textPC.Size = new Size(213, 16);
             textPC.TabIndex = 0;
             // 
             // lblPrecioC
             // 
             lblPrecioC.AutoSize = true;
             lblPrecioC.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblPrecioC.Location = new Point(3, 233);
+            lblPrecioC.Location = new Point(3, 175);
             lblPrecioC.Name = "lblPrecioC";
-            lblPrecioC.Size = new Size(255, 32);
+            lblPrecioC.Size = new Size(198, 25);
             lblPrecioC.TabIndex = 1;
             lblPrecioC.Text = "PRECIO DE COMPRA:";
             lblPrecioC.Click += label1_Click;
@@ -281,10 +269,9 @@
             // 
             pnlNombre.BackColor = Color.White;
             pnlNombre.Controls.Add(textNombre);
-            pnlNombre.Location = new Point(153, 141);
-            pnlNombre.Margin = new Padding(3, 4, 3, 4);
+            pnlNombre.Location = new Point(134, 106);
             pnlNombre.Name = "pnlNombre";
-            pnlNombre.Size = new Size(354, 49);
+            pnlNombre.Size = new Size(310, 37);
             pnlNombre.TabIndex = 16;
             pnlNombre.Paint += pnlNombre_Paint;
             // 
@@ -292,19 +279,18 @@
             // 
             textNombre.BorderStyle = BorderStyle.None;
             textNombre.Cursor = Cursors.IBeam;
-            textNombre.Location = new Point(3, 13);
-            textNombre.Margin = new Padding(3, 4, 3, 4);
+            textNombre.Location = new Point(3, 10);
             textNombre.Name = "textNombre";
-            textNombre.Size = new Size(347, 20);
+            textNombre.Size = new Size(304, 16);
             textNombre.TabIndex = 1;
             // 
             // lblNombre
             // 
             lblNombre.AutoSize = true;
             lblNombre.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblNombre.Location = new Point(10, 141);
+            lblNombre.Location = new Point(9, 106);
             lblNombre.Name = "lblNombre";
-            lblNombre.Size = new Size(125, 32);
+            lblNombre.Size = new Size(98, 25);
             lblNombre.TabIndex = 15;
             lblNombre.Text = "NOMBRE:";
             // 
@@ -320,10 +306,9 @@
             btnBuscar.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnBuscar.IconSize = 20;
             btnBuscar.ImageAlign = ContentAlignment.BottomLeft;
-            btnBuscar.Location = new Point(542, 81);
-            btnBuscar.Margin = new Padding(3, 4, 3, 4);
+            btnBuscar.Location = new Point(474, 61);
             btnBuscar.Name = "btnBuscar";
-            btnBuscar.Size = new Size(115, 37);
+            btnBuscar.Size = new Size(101, 28);
             btnBuscar.TabIndex = 14;
             btnBuscar.Text = "BUSCAR";
             btnBuscar.UseVisualStyleBackColor = false;
@@ -334,10 +319,9 @@
             // 
             panel1.BackColor = Color.White;
             panel1.Controls.Add(textID);
-            panel1.Location = new Point(153, 77);
-            panel1.Margin = new Padding(3, 4, 3, 4);
+            panel1.Location = new Point(134, 58);
             panel1.Name = "panel1";
-            panel1.Size = new Size(354, 49);
+            panel1.Size = new Size(310, 37);
             panel1.TabIndex = 2;
             panel1.Paint += panel1_Paint_1;
             // 
@@ -345,10 +329,9 @@
             // 
             textID.BorderStyle = BorderStyle.None;
             textID.Cursor = Cursors.IBeam;
-            textID.Location = new Point(3, 12);
-            textID.Margin = new Padding(3, 4, 3, 4);
+            textID.Location = new Point(3, 9);
             textID.Name = "textID";
-            textID.Size = new Size(347, 20);
+            textID.Size = new Size(304, 16);
             textID.TabIndex = 0;
             textID.TextChanged += textID_TextChanged;
             // 
@@ -356,9 +339,9 @@
             // 
             lblID.AutoSize = true;
             lblID.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblID.Location = new Point(10, 85);
+            lblID.Location = new Point(9, 64);
             lblID.Name = "lblID";
-            lblID.Size = new Size(147, 32);
+            lblID.Size = new Size(116, 25);
             lblID.TabIndex = 1;
             lblID.Text = "BUSCAR ID:";
             // 
@@ -366,19 +349,20 @@
             // 
             lbTitulo.AutoSize = true;
             lbTitulo.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lbTitulo.Location = new Point(10, 8);
+            lbTitulo.Location = new Point(9, 6);
             lbTitulo.Name = "lbTitulo";
-            lbTitulo.Size = new Size(284, 41);
+            lbTitulo.Size = new Size(230, 32);
             lbTitulo.TabIndex = 0;
             lbTitulo.Text = "Detalles Inventario";
             // 
             // FormInventario
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(68, 154, 2);
-            ClientSize = new Size(1394, 795);
+            ClientSize = new Size(1199, 562);
             Controls.Add(pnlFondo);
+            Margin = new Padding(3, 2, 3, 2);
             Name = "FormInventario";
             Text = "FormInventario";
             pnlFondo.ResumeLayout(false);

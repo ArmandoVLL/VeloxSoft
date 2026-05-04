@@ -42,17 +42,15 @@
             TxtLogIn = new Label();
             pictureBox1 = new PictureBox();
             LabelSalir = new Label();
-            textUsuario = new TextBox();
             NavPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)PasswordIcon).BeginInit();
-            panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)UserIcon).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // NavPanel
             // 
-            NavPanel.Controls.Add(textUsuario);
+            NavPanel.Controls.Add(TxtUsuario);
             NavPanel.Controls.Add(LabelError);
             NavPanel.Controls.Add(LabelLimpiar);
             NavPanel.Controls.Add(TxtPassword);
@@ -103,14 +101,15 @@
             TxtPassword.BorderStyle = BorderStyle.None;
             TxtPassword.Font = new Font("Century Gothic", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             TxtPassword.ForeColor = Color.White;
-            TxtPassword.Location = new Point(51, 282);
+            TxtPassword.Location = new Point(51, 268);
             TxtPassword.Margin = new Padding(3, 2, 3, 2);
             TxtPassword.MaxLength = 3000;
             TxtPassword.Multiline = true;
             TxtPassword.Name = "TxtPassword";
             TxtPassword.PasswordChar = '*';
-            TxtPassword.Size = new Size(179, 18);
+            TxtPassword.Size = new Size(205, 24);
             TxtPassword.TabIndex = 70;
+            TxtPassword.TextChanged += TxtPassword_TextChanged;
             // 
             // LogInButton
             // 
@@ -148,14 +147,14 @@
             // panel2
             // 
             panel2.BackColor = Color.FromArgb(10, 80, 17);
-            panel2.Location = new Point(20, 233);
+            panel2.Location = new Point(20, 230);
             panel2.Name = "panel2";
             panel2.Size = new Size(236, 1);
             panel2.TabIndex = 65;
+            panel2.Paint += panel2_Paint;
             // 
             // panel1
             // 
-            panel1.Controls.Add(TxtUsuario);
             panel1.Location = new Point(20, 226);
             panel1.Name = "panel1";
             panel1.Size = new Size(236, 1);
@@ -167,7 +166,7 @@
             TxtUsuario.BorderStyle = BorderStyle.None;
             TxtUsuario.Font = new Font("Century Gothic", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             TxtUsuario.ForeColor = Color.White;
-            TxtUsuario.Location = new Point(28, -18);
+            TxtUsuario.Location = new Point(51, 201);
             TxtUsuario.Margin = new Padding(3, 2, 3, 2);
             TxtUsuario.MaxLength = 10;
             TxtUsuario.Multiline = true;
@@ -221,20 +220,6 @@
             LabelSalir.Text = "Salir";
             LabelSalir.Click += LabelSalir_Click;
             // 
-            // textUsuario
-            // 
-            textUsuario.BackColor = Color.FromArgb(10, 34, 17);
-            textUsuario.BorderStyle = BorderStyle.None;
-            textUsuario.Font = new Font("Century Gothic", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            textUsuario.ForeColor = Color.White;
-            textUsuario.Location = new Point(57, 214);
-            textUsuario.Margin = new Padding(3, 2, 3, 2);
-            textUsuario.MaxLength = 3000;
-            textUsuario.Multiline = true;
-            textUsuario.Name = "textUsuario";
-            textUsuario.Size = new Size(179, 18);
-            textUsuario.TabIndex = 74;
-            // 
             // FormLogIn
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -249,8 +234,6 @@
             NavPanel.ResumeLayout(false);
             NavPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)PasswordIcon).EndInit();
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)UserIcon).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
@@ -271,6 +254,5 @@
         private PictureBox pictureBox1;
         private Label LabelSalir;
         private Label LabelError;
-        private TextBox textUsuario;
     }
 }

@@ -5,12 +5,13 @@ using System.Text;
 using System.Windows.Forms;
 using System.Windows.Media.Converters;
 using VeloxSoft.Formularios;
+using VeloxSoft.Services;
 
 namespace VeloxSoft
 {
     public partial class FormMainMenu : Form
     {
-
+        private readonly ServicioInventario _ServicioInventario;
         // Fields
         private IconButton currentBtn;
         private Panel leftBorderBtn;
@@ -19,9 +20,10 @@ namespace VeloxSoft
 
 
         // Constructor
-        public FormMainMenu()
+        public FormMainMenu(ServicioInventario ServicioInventario)
         {
             InitializeComponent();
+            _ServicioInventario = ServicioInventario;
             leftBorderBtn = new Panel();
             leftBorderBtn.Size = new Size(10, 60);
             panelMenu.Controls.Add(leftBorderBtn);
@@ -135,7 +137,7 @@ namespace VeloxSoft
 
         private void btnInventario_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new FormInventario());
+            OpenChildForm(new FormInventario(_ServicioInventario));
             ActivateButton(sender, RGBColors.color2);
         }
 

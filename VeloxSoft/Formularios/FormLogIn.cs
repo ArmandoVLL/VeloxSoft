@@ -23,12 +23,6 @@ namespace VeloxSoft.Formularios
             _autenticarUsuario = autenticarUsuario;
         }
 
-        [DllImport("user32.DLL", EntryPoint = "ReleaseCapture")]
-        private extern static void ReleaseCapture();
-
-        [DllImport("user32.DLL", EntryPoint = "SendMessage")]
-        private extern static void SendMessage(System.IntPtr hWnd, int wMsg, int wParam, int lParam);
-
         private void NavPanel_MouseDown(object sender, MouseEventArgs e)
         {
 
@@ -101,6 +95,16 @@ namespace VeloxSoft.Formularios
         }
 
         private void TxtUsuario_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void TxtPassword_TextChanged(object sender, EventArgs e)
         {
 
         }
