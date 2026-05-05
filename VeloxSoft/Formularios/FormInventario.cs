@@ -178,10 +178,10 @@ namespace VeloxSoft.Formularios
             string categoria = BoxPrueba.SelectedItem.ToString();
             // DEBUG - borrar después
             MessageBox.Show($"ID: {textID.Text.Trim()}\nNombre: {textNombre.Text.Trim()}\nCantidad: {cantidad}\nPrecio: {precio}\nCategoria: {categoria}");
-            
+
             // 4. Llamar al servicio para insertar el producto
-            string mensaje = _ServicioInventario.Insertar_Producto(textID.Text.Trim(),textNombre.Text.Trim(),cantidad,precio,categoria,out string errorMessage);
-            
+            string mensaje = _ServicioInventario.Insertar_Producto(textID.Text.Trim(), textNombre.Text.Trim(), cantidad, precio, categoria, out string errorMessage);
+
             if (!string.IsNullOrEmpty(errorMessage))
             {
                 LabelError2.Text = errorMessage;
@@ -192,7 +192,7 @@ namespace VeloxSoft.Formularios
             }
             else
             {
-                
+
                 LabelError2.Text = mensaje; // "Producto agregado correctamente."
                 LabelError2.Visible = true;
                 LabelError2.ForeColor = Color.Green;
@@ -258,13 +258,6 @@ namespace VeloxSoft.Formularios
             textNombre.Location = new Point(5, 12);
             textNombre.Size = new Size(pnlNombre.Width - 10, 22);
 
-            // PRECIO DE COMPRA
-            int yPC = (int)(h * 0.38);
-            lblPrecioC.Location = new Point(margenIzq, yPC + 12);
-            pnlPC.Location = new Point(xInput, yPC);
-            pnlPC.Size = new Size(anchoInput, 45);
-            textPC.Location = new Point(5, 12);
-            textPC.Size = new Size(pnlPC.Width - 10, 22);
 
             // PRECIO DE VENTA
             int yPV = (int)(h * 0.51);
@@ -363,32 +356,65 @@ namespace VeloxSoft.Formularios
             int w = pnlBD.Width;
             int h = pnlBD.Height;
 
+            // TÍTULO
             Titulo.Location = new Point(17, 12);
-            Titulo.Size = new Size(w - 30, 40);
+            Titulo.Size = new Size(w - 30, 35);
 
-            BuscarBD.Location = new Point(17, 70);
+            // TODO EN UNA SOLA LÍNEA — Y: 55
+            int y = 55;
+            int anchoCmb = (int)(w * 0.18);
+            int anchoBuscar = (int)(w * 0.22);
+            int altoControl = 38;
+            int x = 17;
 
-            pnlBuscarBD.Location = new Point(170, 60);
-            pnlBuscarBD.Size = new Size(w - 320, 45);
-            tbBuscarBD.Size = new Size(pnlBuscarBD.Width - 10, 25);
-            tbBuscarBD.Location = new Point(5, 10);
+            // BUSCAR ID
+            BuscarBD.Location = new Point(x, y + 8);
+            x += BuscarBD.Width + 5;
+            pnlBuscarBD.Location = new Point(x, y);
+            pnlBuscarBD.Size = new Size(anchoBuscar, altoControl);
+            tbBuscarBD.Location = new Point(5, 9);
+            tbBuscarBD.Size = new Size(pnlBuscarBD.Width - 10, 22);
+            x += anchoBuscar + 8;
 
-            btnGuardarBD.Location = new Point(pnlBuscarBD.Right + 8, 60);
-            btnGuardarBD.Size = new Size(w - pnlBuscarBD.Right - 25, 45);
+            btnGuardarBD.Location = new Point(x, y);
+            btnGuardarBD.Size = new Size(70, altoControl);
+            x += 70 + 15;
 
-            dtgBDInv.Location = new Point(11, 120);
-            dtgBDInv.Size = new Size(w - 22, h - 135);
+            // CATEGORÍA
+            lbCategoria.Location = new Point(x, y);
+            x += lbCategoria.Width + 5;
+            cbCategoria.Location = new Point(x, y);
+            cbCategoria.Size = new Size(160, altoControl);
+            x += anchoCmb + 15;
+
+            // ESTADO
+            lbEstado.Location = new Point(x, y);
+            x += lbEstado.Width + 5;
+            cbEstado.Location = new Point(x, y);
+            cbEstado.Size = new Size(100, altoControl);
+
+            // TABLA
+            dtgBDInv.Location = new Point(11, y + altoControl + 10);
+            dtgBDInv.Size = new Size(w - 22, h - (y + altoControl + 25));
 
             pnlBD.Invalidate();
-
         }
-
         private void lblID_Click(object sender, EventArgs e)
         {
 
         }
 
         private void btnGuardar_MouseClick(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void textNombre_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cbCategoria_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }
