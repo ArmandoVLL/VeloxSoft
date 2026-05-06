@@ -24,7 +24,7 @@ namespace VeloxSoft.Services
             errorMessage = null;
             try
             {
-                var conn = new NpgsqlConnection(_dbConfig.GetConnection(Program.RolActual));
+                using var conn = new NpgsqlConnection(_dbConfig.GetConnection(Program.RolActual));
                 conn.Open();
                 using var cmd = new NpgsqlCommand(
                     @"SELECT p.id_producto, p.nombre, p.cantidad, p.precio, p.estado, c.nom_cat AS categoria
@@ -94,14 +94,45 @@ namespace VeloxSoft.Services
             }
             catch (PostgresException e) //SI OCURRE UN ERROR DE POSTGRESQL, SE CAPTURA LA EXCEPCION
             {
-               return errorMessage = "Error de base de datos: "; //ERROR PARA SPLIT 
+                return errorMessage = "Error de base de datos: "; //ERROR PARA SPLIT 
             }
             catch (Exception e)//SI OCURRE CUALQUIER OTRO TIPO DE EXCEPCION, SE CAPTURA
             {
                 return errorMessage = "Error inesperado: "; //ERROR PARA SPLIT
             }
         }
-        
+
+        public void Eliminar_Producto(string idProducto, out string errorMessage)
+        {
+            errorMessage = null;
+            try
+            {
+                using var conn = new NpgsqlConnection(_dbConfig.GetConnection(Program.RolActual));
+                conn.Open();
+
+                using var cmd = new NpgsqlCommand("UPDATE tbl_producto SET estado = false WHERE id_producto = @id", conn);
+                cmd.Parameters.AddWithValue("id", idProducto);
+
+                int filasAfectadas = cmd.ExecuteNonQuery(); //EJECUTA LA CONSULTA Y OBTIENE EL NUMERO DE FILAS AFECTADAS, SI EL NUMERO DE FILAS AFECTADAS ES 0, SIGNIFICA QUE NO SE ENCONTRO EL PRODUCTO CON EL ID PROPORCIONADO, SE ASIGNA UN MENSAJE DE ERROR
+
+                if (filasAfectadas == 0)
+                {
+                    errorMessage = "No se encontró el producto con el ID proporcionado."; //SE ASIGNA UN MENSAJE DE ERROR SI NO SE ENCONTRO EL PRODUCTO CON EL ID PROPORCIONADO
+                }
+
+
+
+            }
+            catch (PostgresException e)
+            {
+                errorMessage = "Error inesperado";
+            }
+            catch (Exception e)
+            {
+                errorMessage = "Error de base de datos";
+            }
+
+        }
+
     }
 }
-

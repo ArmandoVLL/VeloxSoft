@@ -135,7 +135,43 @@ namespace VeloxSoft.Formularios
 
         private void btnEliminar_Click(object sender, EventArgs e)
         {
+            // Validar que se haya seleccionado un producto en la tabla
+            if (dtgBDInv.SelectedRows.Count == 0)
+            {
+                LabelError.Text = "Debe seleccionar un producto para eliminar.";
+                LabelError.Visible = true;
+                LabelError.ForeColor = Color.Red;
+                return;
+            }
 
+            // Obtener el ID del producto seleccionado en la tabla
+            string idProducto = dtgBDInv.SelectedRows[0].Cells[0].Value.ToString(); // O el nombre de la columna que corresponda
+
+            // Mostrar un cuadro de diálogo de confirmación antes de eliminar el producto
+            var Evitemos_Errores = MessageBox.Show(
+                $"¿Está seguro de que desea eliminar el producto con ID: {idProducto}?", //confirmación de eliminación, se muestra el ID del producto para que el usuario pueda verificar que está eliminando el producto correcto
+                "Confirmar eliminación",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+            // Si el usuario selecciona "No", se cancela la operación de eliminación
+            if (Evitemos_Errores == DialogResult.No) return;
+
+            //Llamar al serivico para eliminar el producto.
+            _ServicioInventario.Eliminar_Producto(idProducto, out string errorMessage);
+
+            //Mostrar mensaje de error o éxito dependiendo del resultado de la operación
+            if (!string.IsNullOrEmpty(errorMessage))
+            {
+                LabelError.Text = errorMessage;
+                LabelError.Visible = true;
+            }
+            else
+            {
+                LabelError.Text = "Producto eliminado correctamente.";
+                LabelError.ForeColor = Color.Green;
+                LabelError.Visible = true;
+                CargarInventario();
+            }
         }
 
         private void btnGuardar_Click(object sender, EventArgs e)
