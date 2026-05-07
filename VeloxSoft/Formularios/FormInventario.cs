@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text;
 using System.Windows.Forms;
+using VeloxSoft.Models;
 using VeloxSoft.Services;
 
 namespace VeloxSoft.Formularios
@@ -68,65 +69,7 @@ namespace VeloxSoft.Formularios
             }
         }
 
-
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
         private void pnlDetalles_Paint(object sender, PaintEventArgs e)
-        {
-            RedondearPanel((Panel)sender, e, 15);
-        }
-
-        private void textID_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void panel1_Paint_1(object sender, PaintEventArgs e)
-        {
-            RedondearPanel((Panel)sender, e, 15);
-        }
-
-        private void btnBuscar_Click(object sender, EventArgs e)
-        {
-
-        }
-
-
-
-        private void pnlNombre_Paint(object sender, PaintEventArgs e)
-        {
-            RedondearPanel((Panel)sender, e, 15);
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pnlPC_Paint(object sender, PaintEventArgs e)
-        {
-            RedondearPanel((Panel)sender, e, 15);
-        }
-
-        private void pnlStock_Paint(object sender, PaintEventArgs e)
-        {
-            RedondearPanel((Panel)sender, e, 15);
-        }
-
-        private void label1_Click_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textPV_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pnlPV_Paint(object sender, PaintEventArgs e)
         {
             RedondearPanel((Panel)sender, e, 15);
         }
@@ -143,7 +86,7 @@ namespace VeloxSoft.Formularios
             }
 
             // Obtener el ID del producto seleccionado en la tabla
-            string idProducto = dtgBDInv.SelectedRows[0].Cells[0].Value.ToString(); // O el nombre de la columna que corresponda
+            string idProducto = dtgBDInv.SelectedRows[0].Cells[0].Value?.ToString() ?? ""; // O el nombre de la columna que corresponda
 
             // Mostrar un cuadro de diálogo de confirmación antes de eliminar el producto
             var Evitemos_Errores = MessageBox.Show(
@@ -156,7 +99,14 @@ namespace VeloxSoft.Formularios
 
             //Llamar al serivico para eliminar el producto.
             _ServicioInventario.Eliminar_Producto(idProducto, out string errorMessage);
-
+            string EstadoProducto = dtgBDInv.SelectedRows[0].Cells[5].Value?.ToString() ?? "";
+            if(EstadoProducto == "Inactivo")
+            {
+                LabelError.Text = "El producto ya se encuentra inactivo.";
+                LabelError.Visible = true;
+                LabelError.ForeColor = Color.Red;
+                return;
+            }
             //Mostrar mensaje de error o éxito dependiendo del resultado de la operación
             if (!string.IsNullOrEmpty(errorMessage))
             {
@@ -174,7 +124,7 @@ namespace VeloxSoft.Formularios
 
         private void btnGuardar_Click(object sender, EventArgs e)
         {
-            if (!_modoEdicion)
+            if (!_modoEdicion) //FALSO
             {
                 // 1. Validar que los campos no estén vacíos
                 if (string.IsNullOrWhiteSpace(textID.Text) ||
@@ -211,19 +161,19 @@ namespace VeloxSoft.Formularios
                     return;
                 }
 
-            string categoria = BoxPrueba.SelectedItem.ToString();
+                string categoria = BoxPrueba.SelectedItem.ToString();
 
-            if (categoria == "Pieza")
-            {
-                categoria = "PZ";
-            }
-            else if (categoria == "Kilo")
-            {
-                categoria = "KG";
-            }
+                if (categoria == "Pieza")
+                {
+                    categoria = "PZ";
+                }
+                else if (categoria == "Kilo")
+                {
+                    categoria = "KG";
+                }
 
-            // DEBUG - borrar después
-            MessageBox.Show($"ID: {textID.Text.Trim()}\nNombre: {lblNombre.Text.Trim()}\nCantidad: {cantidad}\nPrecio: {precio}\nCategoria: {categoria}");
+                // DEBUG - borrar después
+                MessageBox.Show($"ID: {textID.Text.Trim()}\nNombre: {lblNombre.Text.Trim()}\nCantidad: {cantidad}\nPrecio: {precio}\nCategoria: {categoria}");
 
                 // 4. Llamar al servicio para insertar el producto
                 string mensaje = _ServicioInventario.Insertar_Producto(textID.Text.Trim(), textNombre.Text.Trim(), cantidad, precio, categoria, out string errorMessage);
@@ -252,9 +202,103 @@ namespace VeloxSoft.Formularios
                     BoxPrueba.SelectedItem = null;
                 }
             }
-            else 
-            { 
-               
+            else //VERDADERO
+            {
+                MessageBox.Show($"modoEdicion: {_modoEdicion}\nesInactivo: {cbEstadoInv.Visible}\nStock: '{textStock.Text}'\nPrecio: '{textPV.Text}'"); 
+                // Determinar si el producto estaba inactivo según si cbEstadoInv está visible
+                bool esInactivo = cbEstadoInv.Visible;
+
+                if (esInactivo)
+                {
+                    // Validar nombre y categoria
+                    if (string.IsNullOrWhiteSpace(textNombre.Text) || textNombre.Text == "Ej: 4011")
+                    {
+                        LabelError2.Text = "El nombre es obligatorio.";
+                        LabelError2.ForeColor = Color.Red;
+                        LabelError2.Visible = true;
+                        return;
+                    }
+                    if (BoxPrueba.SelectedItem == null)
+                    {
+                        LabelError2.Text = "Debe seleccionar una categoría.";
+                        LabelError2.ForeColor = Color.Red;
+                        LabelError2.Visible = true;
+                        return;
+                    }
+                    // Si quiere reactivar, debe tener stock y precio válidos
+                    if (cbEstadoInv.SelectedItem?.ToString() == "Activo")
+                    {
+                        if (!decimal.TryParse(textStock.Text, out decimal stockVal) || stockVal <= 0)
+                        {
+                            LabelError2.Text = "Para reactivar el producto el stock debe ser mayor a 0.";
+                            LabelError2.ForeColor = Color.Red;
+                            LabelError2.Visible = true;
+                            return;
+                        }
+                        if (!decimal.TryParse(textPV.Text, out decimal precioVal) || precioVal <= 0)
+                        {
+                            LabelError2.Text = "Para reactivar el producto el precio debe ser mayor a 0.";
+                            LabelError2.ForeColor = Color.Red;
+                            LabelError2.Visible = true;
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    // Validar stock y precio — deben ser mayores a 0
+                    if (!decimal.TryParse(textStock.Text, out decimal stockVal) || stockVal <= 0)
+                    {
+                        LabelError2.Text = "El stock debe ser mayor a 0.";
+                        LabelError2.ForeColor = Color.Red;
+                        LabelError2.Visible = true;
+                        return;
+                    }
+                    if (!decimal.TryParse(textPV.Text, out decimal precioVal) || precioVal <= 0)
+                    {
+                        LabelError2.Text = "El precio debe ser mayor a 0.";
+                        LabelError2.ForeColor = Color.Red;
+                        LabelError2.Visible = true;
+                        return;
+                    }
+                }
+
+                // Parsear cantidad y precio
+                decimal cantidad = esInactivo ? 0 : decimal.Parse(textStock.Text);
+                decimal precio = esInactivo ? 0 : decimal.Parse(textPV.Text);
+
+                // Convertir categoria
+                string categoria = BoxPrueba.SelectedItem?.ToString() == "Pieza" ? "PZ" : "KL";
+
+                // Determinar estado
+                bool estado = esInactivo
+                    ? cbEstadoInv.SelectedItem?.ToString() == "Activo"
+                    : true;
+
+                // Llamar al servicio
+                string mensaje = _ServicioInventario.Actualizar_Producto(
+                    textID.Text.Trim(),
+                    textNombre.Text.Trim(),
+                    cantidad,
+                    precio,
+                    categoria,
+                    estado,
+                    out string errorMessage);
+
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    LabelError2.Text = errorMessage;
+                    LabelError2.ForeColor = Color.Red;
+                    LabelError2.Visible = true;
+                    return;
+                }
+
+                LabelError2.Text = mensaje;
+                LabelError2.ForeColor = Color.Green;
+                LabelError2.Visible = true;
+                CargarInventario();
+
+                btnNuevo_Click(sender, e);
             }
         }
 
@@ -272,6 +316,10 @@ namespace VeloxSoft.Formularios
             textID.Enabled = true;
             textNombre.ReadOnly = false;
             textNombre.Enabled = true;
+            BoxPrueba.Enabled = true;
+            textPV.ForeColor = Color.DimGray;
+            textStock.ForeColor = Color.DimGray;
+            textNombre.ForeColor = Color.DimGray;
 
             //Desactivamos el modo edición para que al guardar se cree un nuevo producto en lugar de actualizar uno existente
             _modoEdicion = false;
@@ -279,6 +327,9 @@ namespace VeloxSoft.Formularios
             // Limpieza de mensaje de error
             LabelError2.Text = string.Empty;
             LabelError2.Visible = false;
+
+            lblEstado.Visible = false;
+            cbEstadoInv.Visible = false;
         }
 
         private void btnNuevo_Paint(object sender, PaintEventArgs e)
@@ -296,6 +347,440 @@ namespace VeloxSoft.Formularios
             RedondearBoton(btnEliminar, e, 15);
         }
 
+        private void FormInventario_Load(object sender, EventArgs e)
+        {
+            pnlDetalles_Resize(this, EventArgs.Empty);
+            CargarInventario();                   // LLAMAMOS AL MÉTODO PARA CARGAR LOS DATOS DE PRUEBA EN LA TABLA, LUEGO LO ELIMINAMOS O LO MODIFICAMOS PARA QUE CARGUE LOS DATOS REALES DESDE LA BASE DE DATOS
+            pnlBD_Resize(this, EventArgs.Empty);
+        }
+        private void CargarInventario(List<Producto> lista = null) // CON ESTE MÉTODO LLENAMOS LA TABLA CON DATOS DE PRUEBA PARA VER CÓMO QUEDA, LUEGO LO ELIMINAMOS O LO MODIFICAMOS PARA QUE CARGUE LOS DATOS REALES DESDE LA BASE DE DATOS
+        {
+            if (lista == null)
+            {
+                lista = _ServicioInventario.Ver_Productos(out String errorMessage);//OBTENEMOS LA LISTA DE PRODUCTOS DESDE EL SERVICIO DE INVENTARIO, SI OCURRE UN ERROR SE ASIGNA UN MENSAJE A errorMessage
+                if (!string.IsNullOrEmpty(errorMessage))//SI HAY UN MENSAJE DE ERROR, LO MOSTRAMOS EN LA ETIQUETA DE ERROR Y SALIMOS DEL MÉTODO PARA NO INTENTAR CARGAR DATOS EN LA TABLA
+                {
+                    LabelError.Text = errorMessage;
+                    LabelError.Visible = true;
+                    return;
+                }
+            }
+
+            dtgBDInv.Rows.Clear(); // Limpio la tabla antes de cargar los datos
+
+            foreach (var producto in lista)
+            {
+                string cantidad;
+
+                if (producto.IdCategoria == "Pieza") // PZ es el ID de Pieza en tu BD
+                {
+                    cantidad = ((int)producto.Cantidad).ToString();        // Sin decimales
+                }
+                else
+                {
+                    cantidad = producto.Cantidad.ToString("F2");           // 3 decimales
+                }
+
+                dtgBDInv.Rows.Add( //añade una nueva fila a la tabla con los datos del producto
+                    producto.IdProducto,
+                    producto.Nombre,
+                    producto.IdCategoria,
+                    cantidad,
+                    producto.Precio.ToString("F2"),
+                    producto.Estado ? "Activo" : "Inactivo");
+            }
+
+        }
+
+        private void pnlBD_Paint(object sender, PaintEventArgs e)
+        {
+            RedondearPanel((Panel)sender, e, 15);
+        }
+
+        private void btnGuardarBD_Paint(object sender, PaintEventArgs e)
+        {
+            RedondearBoton(btnBuscar, e, 15);
+        }
+
+        // INICIO EVENTOS ENTER - LEAVE PARA LOS TEXTBOX, ESTO ES PARA SIMULAR PLACEHOLDERS EN LOS TEXTBOX (Gil)
+        private void textID_Leave(object sender, EventArgs e)
+        {
+            if (textID.Text == "")
+            {
+                textID.Text = "Ej: 4011";
+                textID.ForeColor = Color.DarkGray;
+            }
+        }
+
+        private void textID_Enter(object sender, EventArgs e)
+        {
+            if (textID.Text == "Ej: 4011")
+            {
+                textID.Text = "";
+                textID.ForeColor = Color.Black;
+            }
+        }
+
+        private void textNombre_Leave(object sender, EventArgs e)
+        {
+            if (textNombre.Text == "")
+            {
+                textNombre.Text = "Nombre producto...";
+                textNombre.ForeColor = Color.DarkGray;
+            }
+        }
+
+        private void textNombre_Enter(object sender, EventArgs e)
+        {
+            if (textNombre.Text == "Nombre producto...")
+            {
+                textNombre.Text = "";
+                textNombre.ForeColor = Color.Black;
+            }
+        }
+
+        private void textStock_Leave(object sender, EventArgs e)
+        {
+            if (textStock.Text == "")
+            {
+                textStock.Text = "0";
+                textStock.ForeColor = Color.DarkGray;
+            }
+        }
+
+        private void textStock_Enter(object sender, EventArgs e)
+        {
+            if (textStock.Text == "0")
+            {
+                textStock.Text = "";
+                textStock.ForeColor = Color.Black;
+            }
+        }
+
+        private void textPV_Leave(object sender, EventArgs e)
+        {
+            if (textPV.Text == "")
+            {
+                textPV.Text = "0";
+                textPV.ForeColor = Color.DarkGray;
+            }
+        }
+
+        private void textPV_Enter(object sender, EventArgs e)
+        {
+            if (textPV.Text == "0")
+            {
+                textPV.Text = "";
+                textPV.ForeColor = Color.Black;
+            }
+        }
+
+        private void textBuscarID_Enter(object sender, EventArgs e)
+        {
+            if (textBuscarID.Text == "Ej: 4011")
+            {
+                textBuscarID.Text = "";
+                textBuscarID.ForeColor = Color.Black;
+            }
+        }
+
+        private void textBuscarID_Leave(object sender, EventArgs e)
+        {
+            if (textBuscarID.Text == "")
+            {
+                textBuscarID.Text = "Ej: 4011";
+                textBuscarID.ForeColor = Color.DarkGray;
+            }
+        }
+        //FINAL EVENTOS ENTER - LEAVE PARA LOS TEXTBOX (Gil)
+
+        // Evento para cargar los datos del producto seleccionado en la tabla a los campos de texto para su edición (Gil)
+        private void dtgBDInv_DoubleClick(object sender, EventArgs e)
+        {
+            if (dtgBDInv.CurrentRow == null) return;
+            DataGridViewRow fila = dtgBDInv.CurrentRow;
+
+            // Rellenar campos
+            textID.Text = fila.Cells[0].Value?.ToString() ?? "";
+            textNombre.Text = fila.Cells[1].Value?.ToString() ?? "";
+            BoxPrueba.Text = fila.Cells[2].Value?.ToString() ?? "";
+            textStock.Text = fila.Cells[3].Value?.ToString() ?? "";
+            textPV.Text = fila.Cells[4].Value?.ToString() ?? "";
+           
+
+            // ID siempre bloqueado
+            textID.ReadOnly = true;
+            textID.Enabled = false;
+
+            string estadoProducto = fila.Cells[5].Value?.ToString() ?? "";
+
+            if (estadoProducto == "Inactivo")
+            {
+                // Inactivo: puede modificar nombre, categoria y estado
+                textNombre.ReadOnly = false;
+                textNombre.Enabled = true;
+                BoxPrueba.Enabled = true;
+                textStock.ReadOnly = false;
+                textStock.Enabled = true;
+                textPV.ReadOnly = false;
+                textPV.Enabled = true;
+                lblEstado.Visible = true;
+                cbEstadoInv.Visible = true;
+                cbEstadoInv.Enabled = true;
+                cbEstadoInv.SelectedIndex = 1;
+
+                textNombre.ForeColor = Color.Black;
+                textPV.ForeColor = Color.Black;
+                textStock.ForeColor = Color.Black;
+                
+            }
+            else
+            {
+                // Activo: solo puede modificar stock y precio
+                textNombre.ReadOnly = true;
+                textNombre.Enabled = false;
+                BoxPrueba.Enabled = false;
+                textStock.ReadOnly = false;
+                textStock.Enabled = true;
+                textPV.ReadOnly = false;
+                textPV.Enabled = true;
+                lblEstado.Visible = false;
+                cbEstadoInv.Visible = false;
+                cbEstadoInv.SelectedIndex = 0;
+                textPV.ForeColor = Color.Black;
+                textStock.ForeColor = Color.Black;
+            }
+
+            _modoEdicion = true;
+        }
+        // FIN EVENTO PARA CARGAR LOS DATOS DEL PRODUCTO SELECCIONADO EN LA TABLA A LOS CAMPOS DE TEXTO PARA SU EDICIÓN (Gil)
+        private void textID_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Backspace permitido
+            if (e.KeyChar == (char)Keys.Back) return;
+
+            if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
+                e.Handled = true;
+
+            if (textID.Text.Length >= 4)
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void textNombre_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Permite letras, números, espacios, backspace, punto y guión
+            if (!char.IsLetterOrDigit(e.KeyChar) &&
+                !char.IsWhiteSpace(e.KeyChar) &&
+                e.KeyChar != (char)Keys.Back &&
+                e.KeyChar != '.' &&
+                e.KeyChar != '-')
+            {
+                e.Handled = true;
+            }
+            string texto = textNombre.Text;
+
+            if (e.KeyChar == '.')
+            {
+                //Bloquear si ya tiene un punto o si este esta al inicio.
+                if (texto.Contains('.') || texto.Length == 0)
+                {
+                    e.Handled = true;
+                }
+                return;
+            }
+
+            if (e.KeyChar == '-')
+            {
+                // Bloquear si ya tiene un guion O si está al inicio
+                if (texto.Contains('-') || texto.Length == 0)
+                {
+                    e.Handled = true;
+                }
+                return;
+            }
+        }
+
+        private void textStock_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            bool esPieza = BoxPrueba.SelectedItem?.ToString() == "Pieza";
+
+            // Backspace permitido
+            if (e.KeyChar == (char)Keys.Back) return;
+
+            if (esPieza && (e.KeyChar == '.' || e.KeyChar == ','))
+            {
+                e.Handled = true; // Bloquea la tecla. No escribe nada.
+                LabelError2.Text = "No se permiten decimales en piezas.";
+                LabelError2.Visible = true;
+                return;
+            }
+            string texto = textStock.Text;
+
+            // SI ES PIEZA (ENTERO)
+            if (esPieza)
+            {
+                if (char.IsDigit(e.KeyChar))
+                {
+                    if (texto.Length >= 6)
+                        e.Handled = true;
+                    return;
+                }
+
+                // bloquear todo lo demás
+                e.Handled = true;
+                return;
+            }
+            // SI NO ES PIEZA (DECIMAL)
+
+            if (char.IsDigit(e.KeyChar))
+            {
+                int puntoPos = texto.IndexOf('.');
+
+                if (puntoPos >= 0)
+                {
+                    string decimales = texto.Substring(puntoPos + 1);
+
+                    if (textStock.SelectionStart > puntoPos && decimales.Length >= 2)
+                        e.Handled = true;
+                }
+                else
+                {
+                    if (texto.Length >= 6)
+                        e.Handled = true;
+                }
+
+                return;
+            }
+
+            if (e.KeyChar == '.')
+            {
+                e.Handled = texto.Contains('.') || texto.Length == 0;
+                return;
+            }
+
+            e.Handled = true;
+        }
+
+        private void textPV_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Permitir Backspace
+            if (e.KeyChar == (char)Keys.Back)
+                return;
+
+            string texto = textPV.Text;
+
+            // Permitir números
+            if (char.IsDigit(e.KeyChar))
+            {
+                int puntoPos = texto.IndexOf('.');
+
+                if (puntoPos >= 0)
+                {
+                    // Máximo 2 decimales
+                    string decimales = texto.Substring(puntoPos + 1);
+
+                    if (textPV.SelectionStart > puntoPos && decimales.Length >= 2)
+                        e.Handled = true;
+                }
+                else
+                {
+                    // Máximo 6 enteros
+                    if (texto.Length >= 6)
+                        e.Handled = true;
+                }
+
+                return;
+            }
+
+            // Permitir solo un punto decimal
+            if (e.KeyChar == '.')
+            {
+                // No permitir más de un punto
+                if (texto.Contains('.'))
+                {
+                    e.Handled = true;
+                    return;
+                }
+
+                // No permitir punto al inicio
+                if (texto.Length == 0)
+                {
+                    e.Handled = true;
+                    return;
+                }
+
+                return;
+            }
+
+            // Bloquear cualquier otro carácter
+            e.Handled = true;
+        }
+
+        private void BoxPrueba_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // 1. Verificamos que haya algo seleccionado para evitar el error
+            if (BoxPrueba.SelectedItem == null) return;
+
+            string categoria = BoxPrueba.SelectedItem.ToString();
+            if (categoria == "Pieza")
+            {
+                // 2. Verificamos que el TextBox no sea nulo y tenga texto
+                if (!string.IsNullOrEmpty(textStock.Text) && textStock.Text.Contains("."))
+                {
+                    textStock.Clear();
+                    LabelError2.Text = "Categoria pieza: No se permiten stock en decimales.";
+                    LabelError2.Visible = true;
+                    LabelError2.ForeColor = Color.Red;
+                }
+            }
+            else
+            {
+                // Si cambia a otra cosa (como Kilo), ocultamos el error
+                LabelError2.Visible = false;
+            }
+        }
+
+        private void btnBuscar_Click_1(object sender, EventArgs e)
+        {
+            string id = string.IsNullOrWhiteSpace(textBuscarID.Text) || textBuscarID.Text == "Ej: 4011"? null: textBuscarID.Text.Trim();
+
+            string categoria = cbCategoria.SelectedItem == null ? null : cbCategoria.SelectedItem.ToString();
+            string estado = cbEstado.SelectedItem == null ? null : cbEstado.SelectedItem.ToString();
+
+            var lista = _ServicioInventario.Buscar_Productos(id, categoria, estado, out string errorMessage);
+
+            if (!string.IsNullOrEmpty(errorMessage))
+            {
+                LabelError.Text = errorMessage;
+                LabelError.Visible = true;
+                return;
+            }
+
+            // Reutilizamos la misma lógica de CargarInventario pero con la lista filtrada
+            CargarInventario(lista);
+        }
+
+        private void textBuscarID_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Backspace permitido
+            if (e.KeyChar == (char)Keys.Back) return;
+
+            if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
+                e.Handled = true;
+
+            if (textBuscarID.Text.Length >= 4)
+            {
+                e.Handled = true;
+            }
+        }
+
+       
+
+
+
+        //Re-diseño de paneles (Armando) <-
         private void pnlBD_Resize(object sender, EventArgs e)
         {
             int w = pnlBD.Width;
@@ -321,15 +806,10 @@ namespace VeloxSoft.Formularios
                 BuscarBD.Location = new Point(x, y + 5);
                 BuscarBD.Size = new Size(anchoLbl, 22);
                 x += anchoLbl + 4;
-
-                pnlBuscarBD.Location = new Point(x, y);
-                pnlBuscarBD.Size = new Size(anchoBuscar, altoControl);
-                tbBuscarBD.Location = new Point(4, 7);
-                tbBuscarBD.Size = new Size(anchoBuscar - 8, 18);
                 x += anchoBuscar + 4;
 
-                btnGuardarBD.Location = new Point(x, y);
-                btnGuardarBD.Size = new Size(anchoBtn, altoControl);
+                btnBuscar.Location = new Point(x, y);
+                btnBuscar.Size = new Size(anchoBtn, altoControl);
                 x += anchoBtn + 10;
 
                 // CATEGORÍA
@@ -369,13 +849,10 @@ namespace VeloxSoft.Formularios
                 BuscarBD.Location = new Point(margen, y1 + 5);
                 BuscarBD.Size = new Size(80, 22);
 
-                pnlBuscarBD.Location = new Point(margen + 84, y1);
-                pnlBuscarBD.Size = new Size(anchoBuscar - 84, altoControl);
-                tbBuscarBD.Location = new Point(4, 7);
-                tbBuscarBD.Size = new Size(pnlBuscarBD.Width - 8, 18);
 
-                btnGuardarBD.Location = new Point(w - margen - 46, y1);
-                btnGuardarBD.Size = new Size(42, altoControl);
+
+                btnBuscar.Location = new Point(w - margen - 46, y1);
+                btnBuscar.Size = new Size(42, altoControl);
 
                 // FILA 2 — COMBOS
                 int y2 = y1 + altoControl + 8;
@@ -468,184 +945,7 @@ namespace VeloxSoft.Formularios
 
             pnlDetalles.Invalidate();
         }
-
-        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-        private void FormInventario_Load(object sender, EventArgs e)
-        {
-            pnlDetalles_Resize(this, EventArgs.Empty);
-            CargarInventario();                   // LLAMAMOS AL MÉTODO PARA CARGAR LOS DATOS DE PRUEBA EN LA TABLA, LUEGO LO ELIMINAMOS O LO MODIFICAMOS PARA QUE CARGUE LOS DATOS REALES DESDE LA BASE DE DATOS
-            pnlBD_Resize(this, EventArgs.Empty); // 
-        }
-        private void CargarInventario() // CON ESTE MÉTODO LLENAMOS LA TABLA CON DATOS DE PRUEBA PARA VER CÓMO QUEDA, LUEGO LO ELIMINAMOS O LO MODIFICAMOS PARA QUE CARGUE LOS DATOS REALES DESDE LA BASE DE DATOS
-        {
-            var lista = _ServicioInventario.Ver_Productos(out String errorMessage);//OBTENEMOS LA LISTA DE PRODUCTOS DESDE EL SERVICIO DE INVENTARIO, SI OCURRE UN ERROR SE ASIGNA UN MENSAJE A errorMessage
-
-            if (!string.IsNullOrEmpty(errorMessage))
-            {
-                LabelError.Text = errorMessage;
-                LabelError.Visible = true;
-                return;
-            }
-
-            dtgBDInv.Rows.Clear(); // Limpio la tabla antes de cargar los datos
-
-            foreach (var producto in lista)
-            {
-                dtgBDInv.Rows.Add( //añade una nueva fila a la tabla con los datos del producto
-                    producto.IdProducto,
-                    producto.Nombre,
-                    producto.IdCategoria,
-                    producto.Cantidad,
-                    producto.Precio,
-                    producto.Estado ? "Activo" : "Inactivo");
-            }
-
-        }
-
-        private void pnlBD_Paint(object sender, PaintEventArgs e)
-        {
-            RedondearPanel((Panel)sender, e, 15);
-        }
-
-        private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
-        private void tbBuscarBD_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pnlBuscarBD_Paint(object sender, PaintEventArgs e)
-        {
-            RedondearPanel((Panel)sender, e, 15);
-        }
-
-        private void btnGuardarBD_Paint(object sender, PaintEventArgs e)
-        {
-            RedondearBoton(btnGuardarBD, e, 15);
-        }
-
-
-        private void lblID_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnGuardar_MouseClick(object sender, MouseEventArgs e)
-        {
-
-        }
-
-        private void textNombre_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void cbCategoria_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textID_Leave(object sender, EventArgs e)
-        {
-            if (textID.Text == "")
-            {
-                textID.Text = "Ej: 4011";
-                textID.ForeColor = Color.DarkGray;
-            }
-        }
-
-        private void textID_Enter(object sender, EventArgs e)
-        {
-            if (textID.Text == "Ej: 4011")
-            {
-                textID.Text = "";
-                textID.ForeColor = Color.Black;
-            }
-        }
-
-        private void textNombre_Leave(object sender, EventArgs e)
-        {
-            if (textNombre.Text == "")
-            {
-                textNombre.Text = "Nombre producto...";
-                textNombre.ForeColor = Color.DarkGray;
-            }
-        }
-
-        private void textNombre_Enter(object sender, EventArgs e)
-        {
-            if (textNombre.Text == "Nombre producto...")
-            {
-                textNombre.Text = "";
-                textNombre.ForeColor = Color.Black;
-            }
-        }
-
-        private void textStock_Leave(object sender, EventArgs e)
-        {
-            if (textStock.Text == "")
-            {
-                textStock.Text = "0";
-                textStock.ForeColor = Color.DarkGray;
-            }
-        }
-
-        private void textStock_Enter(object sender, EventArgs e)
-        {
-            if (textStock.Text == "0")
-            {
-                textStock.Text = "";
-                textStock.ForeColor = Color.Black;
-            }
-        }
-
-        private void textPV_Leave(object sender, EventArgs e)
-        {
-            if (textPV.Text == "")
-            {
-                textPV.Text = "0";
-                textPV.ForeColor = Color.DarkGray;
-            }
-        }
-
-        private void textPV_Enter(object sender, EventArgs e)
-        {
-            if (textPV.Text == "0")
-            {
-                textPV.Text = "";
-                textPV.ForeColor = Color.Black;
-            }
-        }
-
-        private void BuscarBD_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void dtgBDInv_DoubleClick(object sender, EventArgs e)
-        {
-            if (dtgBDInv.CurrentRow == null) return; // Si no hay una fila seleccionada, salimos del método
-            DataGridViewRow fila = dtgBDInv.CurrentRow; // Obtenemos la fila seleccionada
-
-            textID.Text = fila.Cells[0].Value.ToString();
-            textNombre.Text = fila.Cells[1].Value.ToString();
-            BoxPrueba.Text = fila.Cells[2].Value.ToString();
-            textStock.Text = fila.Cells[3].Value.ToString();
-            textPV.Text = fila.Cells[4].Value.ToString();
-
-            //Bloquearemos el campo de ID y nombre
-            textID.ReadOnly = true;
-            textID.Enabled = false;
-            textNombre.ReadOnly = true;
-            textNombre.Enabled = false;
-
-            _modoEdicion = true; //activamos el modo edición para que al guardar se actualice el producto en lugar de crear uno nuevo
-        }
     }
 }
+
+

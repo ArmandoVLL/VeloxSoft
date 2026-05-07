@@ -134,5 +134,123 @@ namespace VeloxSoft.Services
 
         }
 
+        public List<Producto> Buscar_Productos(string id, string categoria, string estado, out string errorMessage)
+        {
+            MessageBox.Show($"id: '{id}'\ncategoria: '{categoria}'\nestado: '{estado}'");
+            errorMessage = null;
+            try
+            {
+                using var conn = new NpgsqlConnection(_dbConfig.GetConnection(Program.RolActual));
+                conn.Open();
+
+                string query = @"SELECT p.id_producto, p.nombre, p.cantidad, p.precio, p.estado, c.nom_cat
+                      FROM tbl_producto p
+                      INNER JOIN tbl_categoria c ON p.id_categoria = c.id_categoria
+                      WHERE 1=1"; //CONSULTA SQL PARA OBTENER LOS PRODUCTOS JUNTO CON SU CATEGORIA, SE UNE LA TABLA DE PRODUCTOS CON LA DE CATEGORIAS PARA OBTENER EL NOMBRE DE LA CATEGORIA, SE UTILIZA "WHERE 1=1" PARA FACILITAR LA CONCATENACION DE CONDICIONES EN LA CONSULTA
+
+                using var cmd = new NpgsqlCommand();
+                cmd.Connection = conn;
+
+                // Agregamos condiciones solo si tienen valor
+                if (!string.IsNullOrEmpty(id)) //si id tiene algo
+                {
+                    query += " AND p.id_producto = @id"; //añadimos a la consulta estructurada lo que hay en id 
+                    cmd.Parameters.AddWithValue("id", id); // enviamos ID como parametro para evitar inyeccion SQL
+
+                    // Ignorar categoria y estado
+                    cmd.CommandText = query;
+                    // Saltar al ejecutar directo
+                }
+                else
+                {
+
+                    if (!string.IsNullOrEmpty(categoria))// si categoria tiene algo
+                    {
+                        string categoriaBD = categoria == "Pieza" ? "PZ" : "KL"; // si categoriaBD = categoria y este es = "Pieza" ? entonces es "PZ" : si no "KL"
+                        query += " AND p.id_categoria = @categoria"; //Añadimos lo que nos dio de resultado en categoria
+                        cmd.Parameters.AddWithValue("categoria", categoriaBD); // enviamos categoriaBD como parametro para evitar inyeccion SQL
+                    }
+
+                    if (string.IsNullOrEmpty(estado)) // Si esta vacio no se filtra por estado, se muestran todos los productos que tengan estado en true
+                    {
+                        query += " AND p.estado = true";
+                    }
+                    else
+                    {
+                        bool estadoBool = estado == "Activo"; // Asignamos un valor booleano a estadoBool dependiendo de si estado es igual a "Activo" o no, si estado es igual a "Activo" entonces estadoBool es true, si no es igual a "Activo" entonces estadoBool es false
+                        query += " AND p.estado = @estado"; // Añadimos a la consulta estructurada lo que hay en estado, se filtra por estado dependiendo del valor de estadoBool, si estadoBool es true se muestran los productos con estado en true, si estadoBool es false se muestran los productos con estado en false
+                        cmd.Parameters.AddWithValue("estado", estadoBool); // enviamos el estadoBool para añadirlo a la consulta.
+                    }
+
+                    cmd.CommandText = query; //Ejecutamos la consulta estructurada con las condiciones añadidas dependiendo de los parametros recibidos, se asigna la consulta estructurada a CommandText del comando para que se ejecute correctamente
+                }
+
+
+                using var reader = cmd.ExecuteReader(); // EJECUTA LA CONSULTA Y OBTIENE UN READER PARA LEER LOS RESULTADOS, se ejecuta la consulta con las condiciones añadidas dependiendo de los parametros recibidos, se obtiene un reader para leer los resultados de la consulta
+                var lista = new List<Producto>(); // Lista de productos filtrados, se crea una lista para almacenar los productos obtenidos de la consulta con las condiciones añadidas dependiendo de los parametros recibidos
+
+                while (reader.Read())
+                {
+                    lista.Add(new Producto
+                    {
+                        IdProducto = reader.GetString(0),
+                        Nombre = reader.GetString(1),
+                        Cantidad = reader.GetDecimal(2),
+                        Precio = reader.GetDecimal(3),
+                        Estado = reader.GetBoolean(4),
+                        IdCategoria = reader.GetString(5)
+                    });
+                }
+
+                return lista; // retorna la lista de productos obtenidos de la consulta con las condiciones añadidas dependiendo de los parametros recibidos, se retorna una lista vacia si no se encontraron productos que cumplan con las condiciones añadidas dependiendo de los parametros recibidos
+            }
+            catch (PostgresException e)
+            {
+                errorMessage = "Error de base de datos.";
+                return new List<Producto>();
+            }
+            catch (Exception e)
+            {
+                errorMessage = "Error inesperado.";
+                return new List<Producto>();
+            }
+
+        }
+
+        public string Actualizar_Producto(string idProducto, string nombre, decimal cantidad, decimal precio, string idCategoria, bool estado, out string errorMessage)
+        {
+            errorMessage = null;
+            try
+            {
+                using var conn = new NpgsqlConnection(_dbConfig.GetConnection(Program.RolActual));
+                conn.Open();
+
+                using var cmd = new NpgsqlCommand("SELECT actualizar_producto(@id, @nombre, @cantidad, @precio, @idCategoria, @estado)", conn);  //llamada a la funcion actualizar_producto, se pasan los parametros necesarios para la funcion, se utilizan parametros en lugar de concatenar los valores directamente en la consulta para evitar inyeccion SQL y mejorar la legibilidad del codigo
+                cmd.Parameters.AddWithValue("id", idProducto); //id 
+                cmd.Parameters.AddWithValue("nombre", nombre); //Nombre
+                cmd.Parameters.AddWithValue("cantidad", cantidad);//Cantidad
+                cmd.Parameters.AddWithValue("precio", precio);//Precio
+                cmd.Parameters.AddWithValue("idCategoria", idCategoria); //Categoria
+                cmd.Parameters.AddWithValue("estado", estado); //Estado
+
+                string resultado = cmd.ExecuteScalar().ToString(); //EJECUTA LA CONSULTA Y OBTIENE EL RESULTADO DE LA FUNCION ACTUALIZAR_PRODUCTO, SE CONVIERTE A STRING PARA RETORNARLO
+                var parts = resultado.Split('|'); //SEPARA EL RESULTADO DE LA FUNCION ACTUALIZAR_PRODUCTO EN PARTES UTILIZANDO EL CARACTER "|" COMO SEPARADOR, SE ASUME QUE LA FUNCION ACTUALIZAR_PRODUCTO RETORNA UN STRING CON EL FORMATO "RESULTADO|MENSAJE", DONDE RESULTADO PUEDE SER "ERROR" O "EXITO" Y MENSAJE PUEDE SER UN MENSAJE DE ERROR O UN MENSAJE DE EXITO DEPENDIENDO DEL RESULTADO
+
+                if (parts[0] == "ERROR") //SI EL PRIMER ELEMENTO DEL RESULTADO ES "ERROR", SE ASIGNA EL SEGUNDO ELEMENTO DEL RESULTADO A LA VARIABLE errorMessage, Y SE RETORNA EL SEGUNDO ELEMENTO DEL RESULTADO
+                {
+                    errorMessage = parts[1];//SE ASIGNA EL SEGUNDO ELEMENTO DEL RESULTADO A LA VARIABLE errorMessage, SE ASUME QUE EL SEGUNDO ELEMENTO DEL RESULTADO CONTIENE UN MENSAJE DE ERROR DESCRIPTIVO QUE EXPLICA LA RAZON DEL ERROR, SE RETORNA EL SEGUNDO ELEMENTO DEL RESULTADO PARA QUE PUEDA SER MOSTRADO AL USUARIO O UTILIZADO EN LA LOGICA DE NEGOCIO DE LA APLICACION
+                }
+
+                return parts[1];//SE RETORNA EL SEGUNDO ELEMENTO DEL RESULTADO, SI EL PRIMER ELEMENTO ES "ERROR" SE RETORNA EL MENSAJE DE ERROR, SI EL PRIMER ELEMENTO NO ES "ERROR" SE RETORNA EL MENSAJE DE EXITO O CUALQUIER OTRO MENSAJE QUE LA FUNCION ACTUALIZAR_PRODUCTO PUEDA RETORNAR, SE ASUME QUE LA FUNCION ACTUALIZAR_PRODUCTO RETORNA UN STRING CON EL FORMATO "RESULTADO|MENSAJE", DONDE RESULTADO PUEDE SER "ERROR" O "EXITO" Y MENSAJE PUEDE SER UN MENSAJE DE ERROR O UN MENSAJE DE EXITO DEPENDIENDO DEL RESULTADO
+            }
+            catch (PostgresException e)
+            {
+                return errorMessage = "Error de base de datos.";
+            }
+            catch (Exception e)
+            {
+                return errorMessage = "Error inesperado.";
+            }
+        }
     }
 }
