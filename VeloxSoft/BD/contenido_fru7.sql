@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict nuxgTDJSZruYlT0hTLre8UKEQ1mOcxKRYGTnfLLw5gcOIP6VMMeGqv2IHXrtWmB
+\restrict yrjaiKDFevBcgMZL45VQgpzQFhKbMqq04891quXwiqQyF3rKnSqZfMmnJ121bey
 
 -- Dumped from database version 18.3
 -- Dumped by pg_dump version 18.3
@@ -33,9 +33,288 @@ CREATE TYPE public.rol AS ENUM (
 
 ALTER TYPE public.rol OWNER TO postgres;
 
+--
+-- Name: actualizar_producto(character varying, character varying, numeric, numeric, character varying, boolean); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.actualizar_producto(id_producto_p character varying, nombre_p character varying, cantidad_p numeric, precio_p numeric, id_categoria_p character varying, estado_p boolean) RETURNS text
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    -- Validar si el producto existe
+    IF NOT EXISTS (
+        SELECT 1
+        FROM TBL_PRODUCTO t
+        WHERE t.id_producto = id_producto_p
+    ) THEN
+        RETURN 'ERROR|El producto no existe';
+    END IF;
+
+    -- Actualizar producto
+    UPDATE TBL_PRODUCTO
+    SET
+        nombre       = nombre_p,
+        cantidad     = cantidad_p,
+        precio       = precio_p,
+        id_categoria = id_categoria_p,
+        estado       = estado_p
+    WHERE id_producto = id_producto_p;
+
+    RETURN 'OK|Producto actualizado correctamente';
+END;
+$$;
+
+
+ALTER FUNCTION public.actualizar_producto(id_producto_p character varying, nombre_p character varying, cantidad_p numeric, precio_p numeric, id_categoria_p character varying, estado_p boolean) OWNER TO postgres;
+
+--
+-- Name: actualizar_usuario(bigint, character varying, character varying, public.rol, boolean); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.actualizar_usuario(id_p bigint, nombre_p character varying, password_p character varying, tipo_p public.rol, estado_p boolean) RETURNS text
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    -- Validar si el usuario existe
+    IF NOT EXISTS (
+        SELECT 1
+        FROM TBL_USUARIO u
+        WHERE u.id = id_p
+    ) THEN
+        RETURN 'ERROR|El usuario no existe';
+    END IF;
+
+    -- Validar si el usuario tiene sesión activa
+    IF EXISTS (
+        SELECT 1
+        FROM TBL_USUARIO u
+        WHERE u.id = id_p
+          AND u.secion = TRUE
+    ) THEN
+        RETURN 'ERROR|No se puede modificar un usuario con sesión activa';
+    END IF;
+
+    -- Actualizar usuario (secion no se modifica)
+    UPDATE TBL_USUARIO
+    SET
+        nombre   = nombre_p,
+        password = password_p,
+        tipo     = tipo_p,
+        estado   = estado_p
+    WHERE id = id_p;
+
+    RETURN 'OK|Usuario actualizado correctamente';
+END;
+$$;
+
+
+ALTER FUNCTION public.actualizar_usuario(id_p bigint, nombre_p character varying, password_p character varying, tipo_p public.rol, estado_p boolean) OWNER TO postgres;
+
+--
+-- Name: comp_usuario(bigint); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.comp_usuario(id_usuario bigint) RETURNS text
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    v_password        TEXT;
+    v_estado          BOOLEAN;
+    v_secion          BOOLEAN;
+    v_ultima_actividad TIMESTAMP;
+BEGIN
+    SELECT password, estado, secion, ultima_actividad
+    INTO v_password, v_estado, v_secion, v_ultima_actividad
+    FROM tbl_usuario
+    WHERE id = id_usuario;
+
+    IF v_password IS NULL THEN
+        RETURN 'ERROR|Credenciales Invalidas';
+    END IF;
+
+    IF v_estado = FALSE THEN
+        RETURN 'ERROR|Credenciales Invalidas';
+    END IF;
+
+    -- Si hay sesión activa verificar si expiró
+    IF v_secion = TRUE THEN
+        IF v_ultima_actividad < NOW() - INTERVAL '6 minutes' THEN
+            -- Sesión expirada, limpiarla y permitir login
+            UPDATE tbl_usuario SET secion = FALSE WHERE id = id_usuario;
+        ELSE
+            -- Sesión real activa
+            RETURN 'ERROR|La sesión está activa';
+        END IF;
+    END IF;
+
+    RETURN 'OK|' || v_password;
+END;
+$$;
+
+
+ALTER FUNCTION public.comp_usuario(id_usuario bigint) OWNER TO postgres;
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
+
+--
+-- Name: tbl_usuario; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.tbl_usuario (
+    id bigint NOT NULL,
+    nombre character varying(50) NOT NULL,
+    password character varying(250) NOT NULL,
+    tipo public.rol NOT NULL,
+    secion boolean NOT NULL,
+    estado boolean NOT NULL,
+    ultima_actividad timestamp without time zone
+);
+
+
+ALTER TABLE public.tbl_usuario OWNER TO postgres;
+
+--
+-- Name: inc_usuario(bigint); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.inc_usuario(id_usuario bigint) RETURNS SETOF public.tbl_usuario
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    UPDATE TBL_USUARIO
+    SET secion = TRUE,
+        ultima_actividad = NOW() -- Registra cuando inició sesión
+    WHERE id = id_usuario;
+
+    RETURN QUERY
+    SELECT * FROM TBL_USUARIO WHERE id = id_usuario;
+END;
+$$;
+
+
+ALTER FUNCTION public.inc_usuario(id_usuario bigint) OWNER TO postgres;
+
+--
+-- Name: insertar_producto(character varying, character varying, numeric, numeric, character varying); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.insertar_producto(id_producto_p character varying, nombre_p character varying, cantidad_p numeric, precio_p numeric, id_categoria_p character varying) RETURNS text
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    -- Validar si el producto ya existe y está ACTIVO
+    IF EXISTS (
+        SELECT 1 
+        FROM TBL_PRODUCTO t
+        WHERE t.id_producto = id_producto_p
+          AND t.estado = TRUE
+    ) THEN
+        RETURN 'ERROR|El producto ya existe y está activo';
+    END IF;
+
+    -- Validar si el producto existe pero está DADO DE BAJA
+    IF EXISTS (
+        SELECT 1 
+        FROM TBL_PRODUCTO t
+        WHERE t.id_producto = id_producto_p
+          AND t.estado = FALSE
+    ) THEN
+        RETURN 'ERROR|El producto ya existe pero está dado de baja';
+    END IF;
+
+    -- Validar si la categoría existe
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM TBL_CATEGORIA c
+        WHERE c.id_categoria = id_categoria_p
+    ) THEN
+        RETURN 'ERROR|La categoría no existe';
+    END IF;
+
+    -- Insertar producto con estado = TRUE por defecto
+    INSERT INTO TBL_PRODUCTO (
+        id_producto,
+        nombre,
+        cantidad,
+        precio,
+        estado,
+        id_categoria
+    )
+    VALUES (
+        id_producto_p,
+        nombre_p,
+        cantidad_p,
+        precio_p,
+        TRUE,
+        id_categoria_p
+    );
+
+    RETURN 'OK|Producto agregado correctamente';
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RETURN 'ERROR|' || SQLERRM;
+END;
+$$;
+
+
+ALTER FUNCTION public.insertar_producto(id_producto_p character varying, nombre_p character varying, cantidad_p numeric, precio_p numeric, id_categoria_p character varying) OWNER TO postgres;
+
+--
+-- Name: insertar_usuario(bigint, character varying, character varying, public.rol, boolean); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.insertar_usuario(id_p bigint, nombre_p character varying, password_p character varying, tipo_p public.rol, estado_p boolean) RETURNS text
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    -- Validar si el usuario ya existe
+    IF EXISTS (
+        SELECT 1
+        FROM TBL_USUARIO u
+        WHERE u.id = id_p
+    ) THEN
+        RETURN 'ERROR|El usuario ya existe';
+    END IF;
+
+    -- Insertar usuario con secion = FALSE por defecto
+    INSERT INTO TBL_USUARIO (
+        id,
+        nombre,
+        password,
+        tipo,
+        secion,
+        estado
+    )
+    VALUES (
+        id_p,
+        nombre_p,
+        password_p,
+        tipo_p,
+        FALSE,
+        estado_p
+    );
+
+    RETURN 'OK|Usuario agregado correctamente';
+END;
+$$;
+
+
+ALTER FUNCTION public.insertar_usuario(id_p bigint, nombre_p character varying, password_p character varying, tipo_p public.rol, estado_p boolean) OWNER TO postgres;
+
+--
+-- Name: tbl_categoria; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.tbl_categoria (
+    id_categoria character varying(4) NOT NULL,
+    nom_cat character varying(50) NOT NULL
+);
+
+
+ALTER TABLE public.tbl_categoria OWNER TO postgres;
 
 --
 -- Name: tbl_cliente; Type: TABLE; Schema: public; Owner: postgres
@@ -276,27 +555,12 @@ CREATE TABLE public.tbl_producto (
     nombre character varying(100) NOT NULL,
     cantidad numeric(10,4) NOT NULL,
     precio numeric(10,4) NOT NULL,
-    estado boolean DEFAULT true
+    estado boolean DEFAULT true,
+    id_categoria character varying(4)
 );
 
 
 ALTER TABLE public.tbl_producto OWNER TO postgres;
-
---
--- Name: tbl_usuario; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.tbl_usuario (
-    id bigint NOT NULL,
-    nombre character varying(50) NOT NULL,
-    password character varying(250) NOT NULL,
-    tipo public.rol NOT NULL,
-    secion character varying(50) NOT NULL,
-    estado character varying(50) NOT NULL
-);
-
-
-ALTER TABLE public.tbl_usuario OWNER TO postgres;
 
 --
 -- Name: tbl_venta; Type: TABLE; Schema: public; Owner: postgres
@@ -336,6 +600,16 @@ ALTER TABLE public.tbl_venta ALTER COLUMN id_venta ADD GENERATED BY DEFAULT AS I
 --
 
 ALTER TABLE ONLY public.tbl_detalle_ventas ALTER COLUMN id_detalle_venta SET DEFAULT nextval('public.tbl_detalle_ventas_id_detalle_venta_seq'::regclass);
+
+
+--
+-- Data for Name: tbl_categoria; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.tbl_categoria (id_categoria, nom_cat) FROM stdin;
+KL	Kilo
+PZ	Pieza
+\.
 
 
 --
@@ -422,7 +696,19 @@ COPY public.tbl_pago (id_pago, tipo_pago) FROM stdin;
 -- Data for Name: tbl_producto; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.tbl_producto (id_producto, nombre, cantidad, precio, estado) FROM stdin;
+COPY public.tbl_producto (id_producto, nombre, cantidad, precio, estado, id_categoria) FROM stdin;
+4235	Aguacate Hash Malla	10.0000	50.0000	t	PZ
+4085	Champiñon blanco	14.0000	80.0000	t	KL
+4094	Zanahoria	23.0000	45.0000	t	KL
+4198	Manzana Golden	30.0000	40.0000	t	KL
+4225	Aguacate Hash	4.0000	3.0000	f	PZ
+4959	Mango Paraiso	6.0000	50.0000	f	KL
+4011	Platano Chiapas	5.0000	10.0000	f	KL
+22222	hola	12.0000	12.0000	f	PZ
+112	Coca Cola 200ml	10.0000	22.0000	f	PZ
+1111	Funciona	0.0000	0.0000	f	PZ
+4083	PapaBlanca	0.0000	0.0000	f	PZ
+4048	Limón SS	0.0000	0.0000	f	PZ
 \.
 
 
@@ -430,7 +716,8 @@ COPY public.tbl_producto (id_producto, nombre, cantidad, precio, estado) FROM st
 -- Data for Name: tbl_usuario; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.tbl_usuario (id, nombre, password, tipo, secion, estado) FROM stdin;
+COPY public.tbl_usuario (id, nombre, password, tipo, secion, estado, ultima_actividad) FROM stdin;
+9993546646	Gilbert	65Ds5l0q21EdKtg2LOlS1wgFLegdWGwkyVQJLzv508AyGS/nPheQcUB1/nW0zosl	1	f	t	\N
 \.
 
 
@@ -489,6 +776,14 @@ SELECT pg_catalog.setval('public.tbl_gasto_id_gasto_seq', 1, false);
 --
 
 SELECT pg_catalog.setval('public.tbl_venta_id_venta_seq', 1, false);
+
+
+--
+-- Name: tbl_categoria tbl_categoria_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tbl_categoria
+    ADD CONSTRAINT tbl_categoria_pkey PRIMARY KEY (id_categoria);
 
 
 --
@@ -596,6 +891,14 @@ ALTER TABLE ONLY public.tbl_venta
 
 
 --
+-- Name: tbl_producto fk_categoria; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tbl_producto
+    ADD CONSTRAINT fk_categoria FOREIGN KEY (id_categoria) REFERENCES public.tbl_categoria(id_categoria);
+
+
+--
 -- Name: tbl_cliente tbl_cliente_direccion_c_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -698,6 +1001,24 @@ ALTER TABLE ONLY public.tbl_venta
 GRANT USAGE ON SCHEMA public TO lectura;
 GRANT USAGE ON SCHEMA public TO admin;
 GRANT USAGE ON SCHEMA public TO crud;
+
+
+--
+-- Name: TABLE tbl_usuario; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT ON TABLE public.tbl_usuario TO lectura;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.tbl_usuario TO admin;
+GRANT SELECT,INSERT,UPDATE ON TABLE public.tbl_usuario TO crud;
+
+
+--
+-- Name: TABLE tbl_categoria; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT ON TABLE public.tbl_categoria TO lectura;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.tbl_categoria TO admin;
+GRANT SELECT,INSERT,UPDATE ON TABLE public.tbl_categoria TO crud;
 
 
 --
@@ -854,15 +1175,6 @@ GRANT SELECT,INSERT,UPDATE ON TABLE public.tbl_producto TO crud;
 
 
 --
--- Name: TABLE tbl_usuario; Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT SELECT ON TABLE public.tbl_usuario TO lectura;
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.tbl_usuario TO admin;
-GRANT SELECT,INSERT,UPDATE ON TABLE public.tbl_usuario TO crud;
-
-
---
 -- Name: TABLE tbl_venta; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -901,5 +1213,5 @@ ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public GRANT SELECT,INSERT,
 -- PostgreSQL database dump complete
 --
 
-\unrestrict nuxgTDJSZruYlT0hTLre8UKEQ1mOcxKRYGTnfLLw5gcOIP6VMMeGqv2IHXrtWmB
+\unrestrict yrjaiKDFevBcgMZL45VQgpzQFhKbMqq04891quXwiqQyF3rKnSqZfMmnJ121bey
 
