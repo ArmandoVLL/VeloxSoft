@@ -15,6 +15,8 @@ namespace VeloxSoft.Formularios
     {
         private bool _modoEdicion = false; // Variable para controlar si estamos editando o creando un nuevo producto
         private readonly ServicioInventario _ServicioInventario;
+
+        // Constructor
         public FormInventario(ServicioInventario ServicioInventario)
         {
             InitializeComponent();
@@ -26,56 +28,16 @@ namespace VeloxSoft.Formularios
             pnlBD_Resize(this, EventArgs.Empty);
 
         }
-
-        //BORDES REDONDOS PARA LOS PANEL, SOLO LO LLAMAMOS EN LOS EVENTOS PAINT DE LOS PANEL, ASÍ SE DIBUJAN LOS BORDES CUANDO SE REDIMENSIONA LA VENTANA
-        private void RedondearPanel(Panel p, PaintEventArgs e, int radio)
+        private void FormInventario_Load(object sender, EventArgs e)
         {
-            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            GraphicsPath path = new GraphicsPath();
-
-            // Dibujamos el camino de las esquinas
-            path.AddArc(0, 0, radio, radio, 180, 90);
-            path.AddArc(p.Width - radio, 0, radio, radio, 270, 90);
-            path.AddArc(p.Width - radio, p.Height - radio, radio, radio, 0, 90);
-            path.AddArc(0, p.Height - radio, radio, radio, 90, 90);
-            path.CloseAllFigures();
-
-            // Aplicamos la forma al panel para que sea "físicamente" redondo
-            p.Region = new Region(path);
-
-            // Dibuja un borde sutil con el verde #A4D1A5 de tu paleta Fruit Salad
-            // Esto hace que el cuadro resalte sobre el fondo verde oscuro
-            using (Pen pen = new Pen(ColorTranslator.FromHtml("#A4D1A5"), 2))
-            {
-                e.Graphics.DrawPath(pen, path);
-            }
-
+            pnlDetalles_Resize(this, EventArgs.Empty);
+            CargarInventario();                   // LLAMAMOS AL MÉTODO PARA CARGAR LOS DATOS DE PRUEBA EN LA TABLA, LUEGO LO ELIMINAMOS O LO MODIFICAMOS PARA QUE CARGUE LOS DATOS REALES DESDE LA BASE DE DATOS
+            pnlBD_Resize(this, EventArgs.Empty);
         }
-
-        private void RedondearBoton(Button btn, PaintEventArgs e, int radio)
-        {
-            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias; // Hace que el borde se vea suave
-
-            using (GraphicsPath path = new GraphicsPath())
-            {
-                path.AddArc(0, 0, radio, radio, 180, 90);
-                path.AddArc(btn.Width - radio, 0, radio, radio, 270, 90);
-                path.AddArc(btn.Width - radio, btn.Height - radio, radio, radio, 0, 90);
-                path.AddArc(0, btn.Height - radio, radio, radio, 90, 90);
-                path.CloseAllFigures();
-
-                // Aplicamos la región redondeada al botón
-                btn.Region = new Region(path);
-            }
-        }
-
-        private void pnlDetalles_Paint(object sender, PaintEventArgs e)
-        {
-            RedondearPanel((Panel)sender, e, 15);
-        }
-
+        //BOTON PARA ELIMINAR
         private void btnEliminar_Click(object sender, EventArgs e)
         {
+            
             // Validar que se haya seleccionado un producto en la tabla
             if (dtgBDInv.SelectedRows.Count == 0)
             {
@@ -119,9 +81,18 @@ namespace VeloxSoft.Formularios
                 LabelError.ForeColor = Color.Green;
                 LabelError.Visible = true;
                 CargarInventario();
+                textID.Text = "";
+                textNombre.Text = "";
+                textPV.Text = "";
+                textStock.Text = "";
+                BoxPrueba.SelectedItem = null;
+                cbEstadoInv.Visible = false;
+                BoxPrueba.Enabled = true;
             }
         }
+        //FIN BOTON PARA ELIMINAR
 
+        //METODO PARA GUARDAR LOS CAMBIOS EN LA BASE DE DATOS, ESTE MÉTODO SE USA TANTO PARA CREAR UN NUEVO PRODUCTO COMO PARA ACTUALIZAR UNO EXISTENTE, DEPENDE DEL VALOR DE _modoEdicion (Gil)
         private void btnGuardar_Click(object sender, EventArgs e)
         {
             if (!_modoEdicion) //FALSO
@@ -161,7 +132,7 @@ namespace VeloxSoft.Formularios
                     return;
                 }
 
-                string categoria = BoxPrueba.SelectedItem.ToString();
+                string categoria = BoxPrueba.SelectedItem?.ToString() ?? "";
 
                 if (categoria == "Pieza")
                 {
@@ -203,8 +174,7 @@ namespace VeloxSoft.Formularios
                 }
             }
             else //VERDADERO
-            {
-                MessageBox.Show($"modoEdicion: {_modoEdicion}\nesInactivo: {cbEstadoInv.Visible}\nStock: '{textStock.Text}'\nPrecio: '{textPV.Text}'"); 
+            {       
                 // Determinar si el producto estaba inactivo según si cbEstadoInv está visible
                 bool esInactivo = cbEstadoInv.Visible;
 
@@ -301,7 +271,9 @@ namespace VeloxSoft.Formularios
                 btnNuevo_Click(sender, e);
             }
         }
-
+        //FIN METODO PARA GUARDAR LOS CAMBIOS EN LA BASE DE DATOS, ESTE MÉTODO SE USA TANTO PARA CREAR UN NUEVO PRODUCTO COMO PARA ACTUALIZAR UNO EXISTENTE, DEPENDE DEL VALOR DE _modoEdicion (Gil)
+       
+        //BOTON NUEVO (LIMPIAR) PARA LIMPIAR CAMPOS
         private void btnNuevo_Click(object sender, EventArgs e)
         {
             //Limpiamos los campos para permitir ingresar un nuevo producto
@@ -331,28 +303,9 @@ namespace VeloxSoft.Formularios
             lblEstado.Visible = false;
             cbEstadoInv.Visible = false;
         }
+        //FIN BOTON NUEVO (LIMPIAR) PARA LIMPIAR CAMPOS
 
-        private void btnNuevo_Paint(object sender, PaintEventArgs e)
-        {
-            RedondearBoton(btnNuevo, e, 15);
-        }
-
-        private void btnGuardar_Paint(object sender, PaintEventArgs e)
-        {
-            RedondearBoton(btnGuardar, e, 15);
-        }
-
-        private void btnEliminar_Paint(object sender, PaintEventArgs e)
-        {
-            RedondearBoton(btnEliminar, e, 15);
-        }
-
-        private void FormInventario_Load(object sender, EventArgs e)
-        {
-            pnlDetalles_Resize(this, EventArgs.Empty);
-            CargarInventario();                   // LLAMAMOS AL MÉTODO PARA CARGAR LOS DATOS DE PRUEBA EN LA TABLA, LUEGO LO ELIMINAMOS O LO MODIFICAMOS PARA QUE CARGUE LOS DATOS REALES DESDE LA BASE DE DATOS
-            pnlBD_Resize(this, EventArgs.Empty);
-        }
+        //METODO PARA CARGAR DATOS EN LA TABLA AL INICIAR Y EN EL FILTRO
         private void CargarInventario(List<Producto> lista = null) // CON ESTE MÉTODO LLENAMOS LA TABLA CON DATOS DE PRUEBA PARA VER CÓMO QUEDA, LUEGO LO ELIMINAMOS O LO MODIFICAMOS PARA QUE CARGUE LOS DATOS REALES DESDE LA BASE DE DATOS
         {
             if (lista == null)
@@ -391,16 +344,7 @@ namespace VeloxSoft.Formularios
             }
 
         }
-
-        private void pnlBD_Paint(object sender, PaintEventArgs e)
-        {
-            RedondearPanel((Panel)sender, e, 15);
-        }
-
-        private void btnGuardarBD_Paint(object sender, PaintEventArgs e)
-        {
-            RedondearBoton(btnBuscar, e, 15);
-        }
+        //FIN PARA CARGAR DATOS EN LA TABLA AL INICIAR Y EN EL FILTRO
 
         // INICIO EVENTOS ENTER - LEAVE PARA LOS TEXTBOX, ESTO ES PARA SIMULAR PLACEHOLDERS EN LOS TEXTBOX (Gil)
         private void textID_Leave(object sender, EventArgs e)
@@ -420,7 +364,6 @@ namespace VeloxSoft.Formularios
                 textID.ForeColor = Color.Black;
             }
         }
-
         private void textNombre_Leave(object sender, EventArgs e)
         {
             if (textNombre.Text == "")
@@ -429,7 +372,6 @@ namespace VeloxSoft.Formularios
                 textNombre.ForeColor = Color.DarkGray;
             }
         }
-
         private void textNombre_Enter(object sender, EventArgs e)
         {
             if (textNombre.Text == "Nombre producto...")
@@ -438,7 +380,6 @@ namespace VeloxSoft.Formularios
                 textNombre.ForeColor = Color.Black;
             }
         }
-
         private void textStock_Leave(object sender, EventArgs e)
         {
             if (textStock.Text == "")
@@ -447,7 +388,6 @@ namespace VeloxSoft.Formularios
                 textStock.ForeColor = Color.DarkGray;
             }
         }
-
         private void textStock_Enter(object sender, EventArgs e)
         {
             if (textStock.Text == "0")
@@ -465,7 +405,6 @@ namespace VeloxSoft.Formularios
                 textPV.ForeColor = Color.DarkGray;
             }
         }
-
         private void textPV_Enter(object sender, EventArgs e)
         {
             if (textPV.Text == "0")
@@ -474,7 +413,6 @@ namespace VeloxSoft.Formularios
                 textPV.ForeColor = Color.Black;
             }
         }
-
         private void textBuscarID_Enter(object sender, EventArgs e)
         {
             if (textBuscarID.Text == "Ej: 4011")
@@ -483,7 +421,6 @@ namespace VeloxSoft.Formularios
                 textBuscarID.ForeColor = Color.Black;
             }
         }
-
         private void textBuscarID_Leave(object sender, EventArgs e)
         {
             if (textBuscarID.Text == "")
@@ -554,6 +491,7 @@ namespace VeloxSoft.Formularios
             _modoEdicion = true;
         }
         // FIN EVENTO PARA CARGAR LOS DATOS DEL PRODUCTO SELECCIONADO EN LA TABLA A LOS CAMPOS DE TEXTO PARA SU EDICIÓN (Gil)
+        //EVENTOS DE VALIDACIÓN DE ENTRADAS
         private void textID_KeyPress(object sender, KeyPressEventArgs e)
         {
             // Backspace permitido
@@ -717,7 +655,22 @@ namespace VeloxSoft.Formularios
             // Bloquear cualquier otro carácter
             e.Handled = true;
         }
+        private void textBuscarID_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Backspace permitido
+            if (e.KeyChar == (char)Keys.Back) return;
 
+            if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
+                e.Handled = true;
+
+            if (textBuscarID.Text.Length >= 4)
+            {
+                e.Handled = true;
+            }
+        }
+        // FIN EVENTOS DE VALIDACIÓN DE ENTRADAS
+
+        //EVENTO DE CAMBIO DE INDICE EN cbPruena (Categoria)
         private void BoxPrueba_SelectedIndexChanged(object sender, EventArgs e)
         {
             // 1. Verificamos que haya algo seleccionado para evitar el error
@@ -742,6 +695,7 @@ namespace VeloxSoft.Formularios
             }
         }
 
+        //BOTÓN DE BUSQUEDA ESTRUCTURADA.
         private void btnBuscar_Click_1(object sender, EventArgs e)
         {
             string id = string.IsNullOrWhiteSpace(textBuscarID.Text) || textBuscarID.Text == "Ej: 4011"? null: textBuscarID.Text.Trim();
@@ -761,26 +715,10 @@ namespace VeloxSoft.Formularios
             // Reutilizamos la misma lógica de CargarInventario pero con la lista filtrada
             CargarInventario(lista);
         }
+        //FINBOTÓN DE BUSQUEDA ESTRUCTURADA.
+        
 
-        private void textBuscarID_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            // Backspace permitido
-            if (e.KeyChar == (char)Keys.Back) return;
-
-            if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
-                e.Handled = true;
-
-            if (textBuscarID.Text.Length >= 4)
-            {
-                e.Handled = true;
-            }
-        }
-
-       
-
-
-
-        //Re-diseño de paneles (Armando) <-
+        //Lógica visual/GUI (Armando) <-
         private void pnlBD_Resize(object sender, EventArgs e)
         {
             int w = pnlBD.Width;
@@ -882,6 +820,7 @@ namespace VeloxSoft.Formularios
             pnlBD.Invalidate();
         }
 
+        //------------ LÓGICA DE GUI ------------
         private void pnlDetalles_Resize(object sender, EventArgs e)
         {
             int w = pnlDetalles.Width;
@@ -944,6 +883,71 @@ namespace VeloxSoft.Formularios
             btnEliminar.Size = new Size(anchoBtn, 50);
 
             pnlDetalles.Invalidate();
+        }
+
+
+        //BORDES REDONDOS PARA LOS PANEL, SOLO LO LLAMAMOS EN LOS EVENTOS PAINT DE LOS PANEL, ASÍ SE DIBUJAN LOS BORDES CUANDO SE REDIMENSIONA LA VENTANA
+        private void RedondearPanel(Panel p, PaintEventArgs e, int radio)
+        {
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            GraphicsPath path = new GraphicsPath();
+
+            // Dibujamos el camino de las esquinas
+            path.AddArc(0, 0, radio, radio, 180, 90);
+            path.AddArc(p.Width - radio, 0, radio, radio, 270, 90);
+            path.AddArc(p.Width - radio, p.Height - radio, radio, radio, 0, 90);
+            path.AddArc(0, p.Height - radio, radio, radio, 90, 90);
+            path.CloseAllFigures();
+
+            // Aplicamos la forma al panel para que sea "físicamente" redondo
+            p.Region = new Region(path);
+
+            // Dibuja un borde sutil con el verde #A4D1A5 de tu paleta Fruit Salad
+            // Esto hace que el cuadro resalte sobre el fondo verde oscuro
+            using (Pen pen = new Pen(ColorTranslator.FromHtml("#A4D1A5"), 2))
+            {
+                e.Graphics.DrawPath(pen, path);
+            }
+        }
+        private void RedondearBoton(Button btn, PaintEventArgs e, int radio)
+        {
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias; // Hace que el borde se vea suave
+
+            using (GraphicsPath path = new GraphicsPath())
+            {
+                path.AddArc(0, 0, radio, radio, 180, 90);
+                path.AddArc(btn.Width - radio, 0, radio, radio, 270, 90);
+                path.AddArc(btn.Width - radio, btn.Height - radio, radio, radio, 0, 90);
+                path.AddArc(0, btn.Height - radio, radio, radio, 90, 90);
+                path.CloseAllFigures();
+
+                // Aplicamos la región redondeada al botón
+                btn.Region = new Region(path);
+            }
+        }
+        private void pnlDetalles_Paint(object sender, PaintEventArgs e)
+        {
+            RedondearPanel((Panel)sender, e, 15);
+        }
+        private void pnlBD_Paint(object sender, PaintEventArgs e)
+        {
+            RedondearPanel((Panel)sender, e, 15);
+        }
+        private void btnGuardarBD_Paint(object sender, PaintEventArgs e)
+        {
+            RedondearBoton(btnBuscar, e, 15);
+        }
+        private void btnNuevo_Paint(object sender, PaintEventArgs e)
+        {
+            RedondearBoton(btnNuevo, e, 15);
+        }
+        private void btnGuardar_Paint(object sender, PaintEventArgs e)
+        {
+            RedondearBoton(btnGuardar, e, 15);
+        }
+        private void btnEliminar_Paint(object sender, PaintEventArgs e)
+        {
+            RedondearBoton(btnEliminar, e, 15);
         }
     }
 }

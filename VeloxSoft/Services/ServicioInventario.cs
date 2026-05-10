@@ -163,7 +163,6 @@ namespace VeloxSoft.Services
                 }
                 else
                 {
-
                     if (!string.IsNullOrEmpty(categoria))// si categoria tiene algo
                     {
                         string categoriaBD = categoria == "Pieza" ? "PZ" : "KL"; // si categoriaBD = categoria y este es = "Pieza" ? entonces es "PZ" : si no "KL"
@@ -184,8 +183,6 @@ namespace VeloxSoft.Services
 
                     cmd.CommandText = query; //Ejecutamos la consulta estructurada con las condiciones añadidas dependiendo de los parametros recibidos, se asigna la consulta estructurada a CommandText del comando para que se ejecute correctamente
                 }
-
-
                 using var reader = cmd.ExecuteReader(); // EJECUTA LA CONSULTA Y OBTIENE UN READER PARA LEER LOS RESULTADOS, se ejecuta la consulta con las condiciones añadidas dependiendo de los parametros recibidos, se obtiene un reader para leer los resultados de la consulta
                 var lista = new List<Producto>(); // Lista de productos filtrados, se crea una lista para almacenar los productos obtenidos de la consulta con las condiciones añadidas dependiendo de los parametros recibidos
 
