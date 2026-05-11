@@ -85,8 +85,9 @@
             pnlFondo.Controls.Add(Inventario);
             pnlFondo.Dock = DockStyle.Fill;
             pnlFondo.Location = new Point(0, 0);
+            pnlFondo.Margin = new Padding(3, 4, 3, 4);
             pnlFondo.Name = "pnlFondo";
-            pnlFondo.Size = new Size(1199, 562);
+            pnlFondo.Size = new Size(1370, 749);
             pnlFondo.TabIndex = 0;
             // 
             // Inventario
@@ -99,11 +100,11 @@
             Inventario.Controls.Add(pnlBD, 1, 0);
             Inventario.Dock = DockStyle.Fill;
             Inventario.Location = new Point(0, 0);
-            Inventario.Margin = new Padding(3, 4, 3, 4);
+            Inventario.Margin = new Padding(3, 5, 3, 5);
             Inventario.Name = "Inventario";
             Inventario.RowCount = 1;
             Inventario.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            Inventario.Size = new Size(1199, 562);
+            Inventario.Size = new Size(1370, 749);
             Inventario.TabIndex = 0;
             // 
             // pnlDetalles
@@ -127,9 +128,10 @@
             pnlDetalles.Controls.Add(btnNuevo);
             pnlDetalles.Controls.Add(llbDetalles);
             pnlDetalles.Dock = DockStyle.Fill;
-            pnlDetalles.Location = new Point(3, 3);
+            pnlDetalles.Location = new Point(3, 4);
+            pnlDetalles.Margin = new Padding(3, 4, 3, 4);
             pnlDetalles.Name = "pnlDetalles";
-            pnlDetalles.Size = new Size(533, 556);
+            pnlDetalles.Size = new Size(610, 741);
             pnlDetalles.TabIndex = 0;
             pnlDetalles.Paint += pnlDetalles_Paint;
             pnlDetalles.Resize += pnlDetalles_Resize;
@@ -139,10 +141,9 @@
             cbEstadoInv.DropDownStyle = ComboBoxStyle.DropDownList;
             cbEstadoInv.FormattingEnabled = true;
             cbEstadoInv.Items.AddRange(new object[] { "Activo", "Baja" });
-            cbEstadoInv.Location = new Point(114, 325);
-            cbEstadoInv.Margin = new Padding(3, 2, 3, 2);
+            cbEstadoInv.Location = new Point(130, 433);
             cbEstadoInv.Name = "cbEstadoInv";
-            cbEstadoInv.Size = new Size(263, 23);
+            cbEstadoInv.Size = new Size(300, 28);
             cbEstadoInv.TabIndex = 39;
             cbEstadoInv.Visible = false;
             // 
@@ -150,9 +151,9 @@
             // 
             lblEstado.AutoSize = true;
             lblEstado.Font = new Font("Century Gothic", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblEstado.Location = new Point(114, 298);
+            lblEstado.Location = new Point(130, 397);
             lblEstado.Name = "lblEstado";
-            lblEstado.Size = new Size(64, 21);
+            lblEstado.Size = new Size(77, 23);
             lblEstado.TabIndex = 38;
             lblEstado.Text = "Estado";
             lblEstado.Visible = false;
@@ -162,10 +163,9 @@
             BoxPrueba.DropDownStyle = ComboBoxStyle.DropDownList;
             BoxPrueba.FormattingEnabled = true;
             BoxPrueba.Items.AddRange(new object[] { "Pieza", "Kilo" });
-            BoxPrueba.Location = new Point(114, 259);
-            BoxPrueba.Margin = new Padding(3, 2, 3, 2);
+            BoxPrueba.Location = new Point(130, 345);
             BoxPrueba.Name = "BoxPrueba";
-            BoxPrueba.Size = new Size(263, 23);
+            BoxPrueba.Size = new Size(300, 28);
             BoxPrueba.TabIndex = 37;
             BoxPrueba.SelectedIndexChanged += BoxPrueba_SelectedIndexChanged;
             // 
@@ -173,9 +173,9 @@
             // 
             lblCategoria.AutoSize = true;
             lblCategoria.Font = new Font("Century Gothic", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblCategoria.Location = new Point(114, 232);
+            lblCategoria.Location = new Point(130, 309);
             lblCategoria.Name = "lblCategoria";
-            lblCategoria.Size = new Size(91, 21);
+            lblCategoria.Size = new Size(109, 23);
             lblCategoria.TabIndex = 36;
             lblCategoria.Text = "Categoria";
             // 
@@ -184,10 +184,9 @@
             textPV.BackColor = Color.White;
             textPV.Font = new Font("Century Gothic", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             textPV.ForeColor = Color.DimGray;
-            textPV.Location = new Point(259, 190);
-            textPV.Margin = new Padding(3, 2, 3, 2);
+            textPV.Location = new Point(296, 253);
             textPV.Name = "textPV";
-            textPV.Size = new Size(118, 27);
+            textPV.Size = new Size(134, 32);
             textPV.TabIndex = 35;
             textPV.Text = "0";
             textPV.Enter += textPV_Enter;
@@ -198,9 +197,9 @@
             // 
             lblPrecio.AutoSize = true;
             lblPrecio.Font = new Font("Century Gothic", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblPrecio.Location = new Point(258, 171);
+            lblPrecio.Location = new Point(295, 228);
             lblPrecio.Name = "lblPrecio";
-            lblPrecio.Size = new Size(57, 21);
+            lblPrecio.Size = new Size(70, 23);
             lblPrecio.TabIndex = 34;
             lblPrecio.Text = "Precio";
             // 
@@ -209,10 +208,9 @@
             textStock.BackColor = Color.White;
             textStock.Font = new Font("Century Gothic", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             textStock.ForeColor = Color.DimGray;
-            textStock.Location = new Point(113, 190);
-            textStock.Margin = new Padding(3, 2, 3, 2);
+            textStock.Location = new Point(129, 253);
             textStock.Name = "textStock";
-            textStock.Size = new Size(118, 27);
+            textStock.Size = new Size(134, 32);
             textStock.TabIndex = 33;
             textStock.Text = "0";
             textStock.Enter += textStock_Enter;
@@ -223,9 +221,9 @@
             // 
             lblStock.AutoSize = true;
             lblStock.Font = new Font("Century Gothic", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblStock.Location = new Point(112, 171);
+            lblStock.Location = new Point(128, 228);
             lblStock.Name = "lblStock";
-            lblStock.Size = new Size(53, 21);
+            lblStock.Size = new Size(63, 23);
             lblStock.TabIndex = 32;
             lblStock.Text = "Stock";
             // 
@@ -234,10 +232,9 @@
             textNombre.BackColor = Color.White;
             textNombre.Font = new Font("Century Gothic", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             textNombre.ForeColor = Color.DimGray;
-            textNombre.Location = new Point(112, 136);
-            textNombre.Margin = new Padding(3, 2, 3, 2);
+            textNombre.Location = new Point(128, 181);
             textNombre.Name = "textNombre";
-            textNombre.Size = new Size(263, 27);
+            textNombre.Size = new Size(300, 32);
             textNombre.TabIndex = 31;
             textNombre.Text = "Nombre producto...";
             textNombre.Enter += textNombre_Enter;
@@ -248,9 +245,9 @@
             // 
             lblNombre.AutoSize = true;
             lblNombre.Font = new Font("Century Gothic", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblNombre.Location = new Point(111, 116);
+            lblNombre.Location = new Point(127, 155);
             lblNombre.Name = "lblNombre";
-            lblNombre.Size = new Size(73, 21);
+            lblNombre.Size = new Size(90, 23);
             lblNombre.TabIndex = 30;
             lblNombre.Text = "Nombre";
             // 
@@ -259,10 +256,9 @@
             textID.BackColor = Color.White;
             textID.Font = new Font("Century Gothic", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             textID.ForeColor = Color.DimGray;
-            textID.Location = new Point(112, 83);
-            textID.Margin = new Padding(3, 2, 3, 2);
+            textID.Location = new Point(128, 111);
             textID.Name = "textID";
-            textID.Size = new Size(263, 27);
+            textID.Size = new Size(300, 32);
             textID.TabIndex = 29;
             textID.Text = "Ej: 4011";
             textID.Enter += textID_Enter;
@@ -273,9 +269,9 @@
             // 
             lblID.AutoSize = true;
             lblID.Font = new Font("Century Gothic", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblID.Location = new Point(110, 64);
+            lblID.Location = new Point(126, 85);
             lblID.Name = "lblID";
-            lblID.Size = new Size(27, 21);
+            lblID.Size = new Size(30, 23);
             lblID.TabIndex = 28;
             lblID.Text = "ID";
             // 
@@ -285,7 +281,7 @@
             LabelError2.ForeColor = Color.Red;
             LabelError2.Location = new Point(0, 0);
             LabelError2.Name = "LabelError2";
-            LabelError2.Size = new Size(533, 15);
+            LabelError2.Size = new Size(610, 20);
             LabelError2.TabIndex = 26;
             LabelError2.Text = "LabelError";
             LabelError2.TextAlign = ContentAlignment.TopCenter;
@@ -303,10 +299,10 @@
             btnEliminar.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnEliminar.IconSize = 40;
             btnEliminar.ImageAlign = ContentAlignment.MiddleLeft;
-            btnEliminar.Location = new Point(382, 465);
-            btnEliminar.Margin = new Padding(3, 4, 3, 4);
+            btnEliminar.Location = new Point(437, 620);
+            btnEliminar.Margin = new Padding(3, 5, 3, 5);
             btnEliminar.Name = "btnEliminar";
-            btnEliminar.Size = new Size(157, 41);
+            btnEliminar.Size = new Size(179, 55);
             btnEliminar.TabIndex = 22;
             btnEliminar.Text = "ELIMINAR";
             btnEliminar.UseVisualStyleBackColor = false;
@@ -325,10 +321,10 @@
             btnGuardar.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnGuardar.IconSize = 40;
             btnGuardar.ImageAlign = ContentAlignment.MiddleLeft;
-            btnGuardar.Location = new Point(194, 465);
-            btnGuardar.Margin = new Padding(3, 4, 3, 4);
+            btnGuardar.Location = new Point(222, 620);
+            btnGuardar.Margin = new Padding(3, 5, 3, 5);
             btnGuardar.Name = "btnGuardar";
-            btnGuardar.Size = new Size(162, 41);
+            btnGuardar.Size = new Size(185, 55);
             btnGuardar.TabIndex = 21;
             btnGuardar.Text = "GUARDAR";
             btnGuardar.UseVisualStyleBackColor = false;
@@ -347,10 +343,10 @@
             btnNuevo.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnNuevo.IconSize = 50;
             btnNuevo.ImageAlign = ContentAlignment.MiddleLeft;
-            btnNuevo.Location = new Point(10, 465);
-            btnNuevo.Margin = new Padding(3, 4, 3, 4);
+            btnNuevo.Location = new Point(11, 620);
+            btnNuevo.Margin = new Padding(3, 5, 3, 5);
             btnNuevo.Name = "btnNuevo";
-            btnNuevo.Size = new Size(159, 41);
+            btnNuevo.Size = new Size(182, 55);
             btnNuevo.TabIndex = 20;
             btnNuevo.Text = "Limpiar";
             btnNuevo.UseVisualStyleBackColor = false;
@@ -361,9 +357,9 @@
             // 
             llbDetalles.AutoSize = true;
             llbDetalles.Font = new Font("Franklin Gothic Medium Cond", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            llbDetalles.Location = new Point(150, 28);
+            llbDetalles.Location = new Point(171, 37);
             llbDetalles.Name = "llbDetalles";
-            llbDetalles.Size = new Size(197, 34);
+            llbDetalles.Size = new Size(251, 39);
             llbDetalles.TabIndex = 0;
             llbDetalles.Text = "Detalles Inventario";
             // 
@@ -380,9 +376,10 @@
             pnlBD.Controls.Add(btnBuscar);
             pnlBD.Controls.Add(BuscarBD);
             pnlBD.Dock = DockStyle.Fill;
-            pnlBD.Location = new Point(542, 3);
+            pnlBD.Location = new Point(619, 4);
+            pnlBD.Margin = new Padding(3, 4, 3, 4);
             pnlBD.Name = "pnlBD";
-            pnlBD.Size = new Size(654, 556);
+            pnlBD.Size = new Size(748, 741);
             pnlBD.TabIndex = 1;
             pnlBD.Paint += pnlBD_Paint;
             pnlBD.Resize += pnlBD_Resize;
@@ -392,10 +389,9 @@
             textBuscarID.BackColor = Color.White;
             textBuscarID.Font = new Font("Century Gothic", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             textBuscarID.ForeColor = Color.DimGray;
-            textBuscarID.Location = new Point(114, 8);
-            textBuscarID.Margin = new Padding(3, 2, 3, 2);
+            textBuscarID.Location = new Point(130, 11);
             textBuscarID.Name = "textBuscarID";
-            textBuscarID.Size = new Size(65, 27);
+            textBuscarID.Size = new Size(74, 32);
             textBuscarID.TabIndex = 38;
             textBuscarID.Text = "Ej: 4011";
             textBuscarID.Enter += textBuscarID_Enter;
@@ -407,9 +403,9 @@
             lbEstado.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             lbEstado.AutoSize = true;
             lbEstado.Font = new Font("Franklin Gothic Medium Cond", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lbEstado.Location = new Point(259, 68);
+            lbEstado.Location = new Point(296, 91);
             lbEstado.Name = "lbEstado";
-            lbEstado.Size = new Size(63, 24);
+            lbEstado.Size = new Size(77, 29);
             lbEstado.TabIndex = 23;
             lbEstado.Text = "Estado:";
             // 
@@ -419,10 +415,9 @@
             cbCategoria.DropDownStyle = ComboBoxStyle.DropDownList;
             cbCategoria.FormattingEnabled = true;
             cbCategoria.Items.AddRange(new object[] { "", "Pieza", "Kilo" });
-            cbCategoria.Location = new Point(121, 68);
-            cbCategoria.Margin = new Padding(3, 2, 3, 2);
+            cbCategoria.Location = new Point(139, 91);
             cbCategoria.Name = "cbCategoria";
-            cbCategoria.Size = new Size(100, 23);
+            cbCategoria.Size = new Size(114, 28);
             cbCategoria.TabIndex = 22;
             // 
             // cbEstado
@@ -431,10 +426,9 @@
             cbEstado.DropDownStyle = ComboBoxStyle.DropDownList;
             cbEstado.FormattingEnabled = true;
             cbEstado.Items.AddRange(new object[] { "", "Activo", "Inactivo" });
-            cbEstado.Location = new Point(359, 68);
-            cbEstado.Margin = new Padding(3, 2, 3, 2);
+            cbEstado.Location = new Point(411, 91);
             cbEstado.Name = "cbEstado";
-            cbEstado.Size = new Size(94, 23);
+            cbEstado.Size = new Size(107, 28);
             cbEstado.TabIndex = 21;
             // 
             // lbCategoria
@@ -442,9 +436,9 @@
             lbCategoria.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             lbCategoria.AutoSize = true;
             lbCategoria.Font = new Font("Franklin Gothic Medium Cond", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lbCategoria.Location = new Point(26, 68);
+            lbCategoria.Location = new Point(30, 91);
             lbCategoria.Name = "lbCategoria";
-            lbCategoria.Size = new Size(82, 24);
+            lbCategoria.Size = new Size(100, 29);
             lbCategoria.TabIndex = 20;
             lbCategoria.Text = "Categoría:";
             // 
@@ -453,7 +447,7 @@
             LabelError.ForeColor = Color.Red;
             LabelError.Location = new Point(0, 0);
             LabelError.Name = "LabelError";
-            LabelError.Size = new Size(654, 15);
+            LabelError.Size = new Size(747, 20);
             LabelError.TabIndex = 19;
             LabelError.Text = "Error";
             LabelError.TextAlign = ContentAlignment.TopCenter;
@@ -468,12 +462,13 @@
             dtgBDInv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dtgBDInv.Columns.AddRange(new DataGridViewColumn[] { colID, colNombre, colCategoria, colStock, colPVenta, colEstado });
             dtgBDInv.Location = new Point(0, 0);
+            dtgBDInv.Margin = new Padding(3, 4, 3, 4);
             dtgBDInv.Name = "dtgBDInv";
             dtgBDInv.ReadOnly = true;
             dtgBDInv.RowHeadersVisible = false;
             dtgBDInv.RowHeadersWidth = 51;
             dtgBDInv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dtgBDInv.Size = new Size(654, 556);
+            dtgBDInv.Size = new Size(747, 741);
             dtgBDInv.TabIndex = 18;
             dtgBDInv.DoubleClick += dtgBDInv_DoubleClick;
             // 
@@ -484,7 +479,7 @@
             colID.MinimumWidth = 6;
             colID.Name = "colID";
             colID.ReadOnly = true;
-            colID.Width = 43;
+            colID.Width = 53;
             // 
             // colNombre
             // 
@@ -493,7 +488,7 @@
             colNombre.MinimumWidth = 6;
             colNombre.Name = "colNombre";
             colNombre.ReadOnly = true;
-            colNombre.Width = 76;
+            colNombre.Width = 93;
             // 
             // colCategoria
             // 
@@ -502,7 +497,7 @@
             colCategoria.MinimumWidth = 6;
             colCategoria.Name = "colCategoria";
             colCategoria.ReadOnly = true;
-            colCategoria.Width = 83;
+            colCategoria.Width = 103;
             // 
             // colStock
             // 
@@ -511,7 +506,7 @@
             colStock.MinimumWidth = 6;
             colStock.Name = "colStock";
             colStock.ReadOnly = true;
-            colStock.Width = 61;
+            colStock.Width = 74;
             // 
             // colPVenta
             // 
@@ -520,7 +515,7 @@
             colPVenta.MinimumWidth = 6;
             colPVenta.Name = "colPVenta";
             colPVenta.ReadOnly = true;
-            colPVenta.Width = 71;
+            colPVenta.Width = 86;
             // 
             // colEstado
             // 
@@ -529,7 +524,7 @@
             colEstado.MinimumWidth = 6;
             colEstado.Name = "colEstado";
             colEstado.ReadOnly = true;
-            colEstado.Width = 67;
+            colEstado.Width = 83;
             // 
             // btnBuscar
             // 
@@ -543,10 +538,10 @@
             btnBuscar.IconColor = Color.Black;
             btnBuscar.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnBuscar.IconSize = 20;
-            btnBuscar.Location = new Point(192, 28);
-            btnBuscar.Margin = new Padding(3, 4, 3, 4);
+            btnBuscar.Location = new Point(220, 37);
+            btnBuscar.Margin = new Padding(3, 5, 3, 5);
             btnBuscar.Name = "btnBuscar";
-            btnBuscar.Size = new Size(29, 24);
+            btnBuscar.Size = new Size(33, 32);
             btnBuscar.TabIndex = 17;
             btnBuscar.UseVisualStyleBackColor = false;
             btnBuscar.Click += btnBuscar_Click_1;
@@ -556,9 +551,9 @@
             // 
             BuscarBD.AutoSize = true;
             BuscarBD.Font = new Font("Franklin Gothic Medium Cond", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            BuscarBD.Location = new Point(77, 28);
+            BuscarBD.Location = new Point(88, 37);
             BuscarBD.Name = "BuscarBD";
-            BuscarBD.Size = new Size(31, 24);
+            BuscarBD.Size = new Size(36, 29);
             BuscarBD.TabIndex = 15;
             BuscarBD.Text = "ID:";
             // 
@@ -629,17 +624,16 @@
             textBox1.Location = new Point(3, 12);
             textBox1.Margin = new Padding(3, 4, 3, 4);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(347, 16);
+            textBox1.Size = new Size(347, 20);
             textBox1.TabIndex = 0;
             // 
             // FormInventario
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(230, 57, 70);
-            ClientSize = new Size(1199, 562);
+            ClientSize = new Size(1370, 749);
             Controls.Add(pnlFondo);
-            Margin = new Padding(3, 2, 3, 2);
             Name = "FormInventario";
             Text = "FormInventario";
             Load += FormInventario_Load;
