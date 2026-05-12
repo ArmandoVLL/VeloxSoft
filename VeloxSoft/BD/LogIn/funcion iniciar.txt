@@ -1,0 +1,12 @@
+CREATE OR REPLACE FUNCTION inc_usuario(id_usuario BIGINT)
+RETURNS SETOF tbl_usuario AS $$
+BEGIN
+    UPDATE TBL_USUARIO
+    SET secion = TRUE,
+        ultima_actividad = NOW() -- Registra cuando inició sesión
+    WHERE id = id_usuario;
+
+    RETURN QUERY
+    SELECT * FROM TBL_USUARIO WHERE id = id_usuario;
+END;
+$$ LANGUAGE plpgsql;

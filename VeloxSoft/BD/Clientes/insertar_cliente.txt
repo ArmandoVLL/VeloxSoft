@@ -1,0 +1,45 @@
+CREATE OR REPLACE FUNCTION insertar_cliente(
+    id_cel_p    BIGINT,
+    nombre_p    CHARACTER VARYING(50),
+    apellido_p  CHARACTER VARYING(50),
+    apodo_p     CHARACTER VARYING(30),
+    direccion_c_p INTEGER
+)
+RETURNS TEXT AS $$
+BEGIN
+    -- Validar si el cliente ya existe
+    IF EXISTS (
+        SELECT 1
+        FROM TBL_CLIENTE c
+        WHERE c.id_cel = id_cel_p
+    ) THEN
+        RETURN 'ERROR|El cliente ya existe';
+    END IF;
+
+    -- Validar si la dirección existe
+    IF NOT EXISTS (
+        SELECT 1
+        FROM TBL_DIRECCION d
+        WHERE d.id_direc = direccion_c_p
+    ) THEN
+        RETURN 'ERROR|La dirección no existe';
+    END IF;
+
+    INSERT INTO TBL_CLIENTE (
+        id_cel,
+        nombre,
+        apellido,
+        apodo,
+        direccion_c
+    )
+    VALUES (
+        id_cel_p,
+        nombre_p,
+        apellido_p,
+        apodo_p,
+        direccion_c_p
+    );
+
+    RETURN 'OK|Cliente agregado correctamente';
+END;
+$$ LANGUAGE plpgsql;

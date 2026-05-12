@@ -1,0 +1,96 @@
+CREATE OR REPLACE FUNCTION insertar_producto(
+    id_producto_p CHARACTER VARYING(30),
+    nombre_p      CHARACTER VARYING(100),
+    cantidad_p    NUMERIC(10,4),
+    precio_p      NUMERIC(10,4),
+    id_categoria_p CHARACTER VARYING(4)
+)
+RETURNS TEXT
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Validar si el producto ya existe y está ACTIVO
+    IF EXISTS (
+        SELECT 1 
+        FROM TBL_PRODUCTO t
+        WHERE t.id_producto = id_producto_p
+          AND t.estado = TRUE
+    ) THEN
+        RETURN 'ERROR|El producto ya existe y está activo';
+    END IF;
+
+    -- Validar si el producto existe pero está DADO DE BAJA
+    IF EXISTS (
+        SELECT 1 
+        FROM TBL_PRODUCTO t
+        WHERE t.id_producto = id_producto_p
+          AND t.estado = FALSE
+    ) THEN
+        RETURN 'ERROR|El producto ya existe pero está dado de baja';
+    END IF;
+
+    -- Validar si la categoría existe
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM TBL_CATEGORIA c
+        WHERE c.id_categoria = id_categoria_p
+    ) THEN
+        RETURN 'ERROR|La categoría no existe';
+    END IF;
+
+    -- Insertar producto con estado = TRUE por defecto
+    INSERT INTO TBL_PRODUCTO (
+        id_producto,
+        nombre,
+        cantidad,
+        precio,
+        estado,
+        id_categoria
+    )
+    VALUES (
+        id_producto_p,
+        nombre_p,
+        cantidad_p,
+        precio_p,
+        TRUE,
+        id_categoria_p
+    );
+
+    RETURN 'OK|Producto agregado correctamente';
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RETURN 'ERROR|' || SQLERRM;
+END;
+$$;
+
+
+
+
+
+CREATE OR REPLACE PROCEDURE insertar_producto(p_id_producto VARCHAR, p_nombre VARCHAR,p_cantidad DECIMAL, p_precio DECIMAL, p_id_categoria VARCHAR)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Validar si el producto ya existe
+    IF EXISTS (
+        SELECT 1 FROM TBL_PRODUCTO 
+        WHERE ID_producto = p_id_producto
+    ) THEN
+        RAISE EXCEPTION 'El producto con ID % ya existe', p_id_producto;
+    END IF;
+
+    -- Validar si la categoría existe
+    IF NOT EXISTS (
+        SELECT 1 FROM tbl_categoria 
+        WHERE id_categoria = p_id_categoria
+    ) THEN
+        RAISE EXCEPTION 'La categoría % no existe', p_id_categoria;
+    END IF;
+
+    -- Insertar producto
+    INSERT INTO TBL_PRODUCTO( ID_producto, Nombre,  Cantidad,  Precio, id_categoria )
+    VALUES ( p_id_producto, p_nombre, p_cantidad, p_precio, p_id_categoria );
+
+END;
+$$;

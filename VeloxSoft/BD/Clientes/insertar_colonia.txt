@@ -1,0 +1,20 @@
+CREATE OR REPLACE FUNCTION insertar_colonia(
+    colonia_p CHARACTER VARYING(100)
+)
+RETURNS TEXT AS $$
+BEGIN
+    -- Validar si la colonia ya existe
+    IF EXISTS (
+        SELECT 1
+        FROM TBL_COLONIA c
+        WHERE c.colonia = colonia_p
+    ) THEN
+        RETURN 'ERROR|La colonia ya existe';
+    END IF;
+
+    INSERT INTO TBL_COLONIA (colonia)
+    VALUES (colonia_p);
+
+    RETURN 'OK|Colonia agregada correctamente';
+END;
+$$ LANGUAGE plpgsql;

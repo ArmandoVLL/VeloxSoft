@@ -1,0 +1,51 @@
+CREATE OR REPLACE FUNCTION actualizar_usuario(
+    id_p       BIGINT,
+	id_c       BIGINT,
+    password_p CHARACTER VARYING(250),
+    tipo_p     rol,
+    estado_p   BOOLEAN
+)
+RETURNS TEXT
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Validar si el usuario existe
+    IF NOT EXISTS (
+        SELECT 1
+        FROM TBL_USUARIO u
+        WHERE u.id = id_p
+    ) THEN
+        RETURN 'ERROR|El usuario no existe';
+    END IF;
+
+	IF EXISTS (
+        SELECT 1
+        FROM TBL_USUARIO u
+        WHERE u.id = id_c
+		AND u.id <> id_p
+    ) THEN
+        RETURN 'ERROR|El usuario con este número ya existe';
+    END IF;
+
+    -- Validar si el usuario tiene sesión activa
+    IF EXISTS (
+        SELECT 1
+        FROM TBL_USUARIO u
+        WHERE u.id = id_p
+          AND u.secion = TRUE
+    ) THEN
+        RETURN 'ERROR|No se puede modificar un usuario con sesión activa';
+    END IF;
+
+    -- Actualizar usuario (secion no se modifica)
+    UPDATE TBL_USUARIO
+    SET
+		id       = id_c,
+        password = password_p,
+        tipo     = tipo_p,
+        estado   = estado_p
+    WHERE id = id_p;
+
+    RETURN 'OK|Usuario actualizado correctamente';
+END;
+$$;
