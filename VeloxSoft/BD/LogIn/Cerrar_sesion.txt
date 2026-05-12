@@ -1,0 +1,21 @@
+CREATE OR REPLACE FUNCTION cerrar_sesion(id_usuario BIGINT)
+RETURNS TEXT AS $$
+DECLARE
+    v_existe BOOLEAN;
+BEGIN
+    SELECT EXISTS(
+        SELECT 1 FROM tbl_usuario 
+        WHERE id = id_usuario AND secion = TRUE
+    ) INTO v_existe;
+
+    IF v_existe = FALSE THEN
+        RETURN 'ERROR|No existe una sesión activa';
+    END IF;
+
+    UPDATE tbl_usuario
+    SET secion = FALSE
+    WHERE id = id_usuario;
+
+    RETURN 'OK|Sesión cerrada correctamente';
+END;
+$$ LANGUAGE plpgsql;

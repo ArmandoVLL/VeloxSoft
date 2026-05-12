@@ -1,0 +1,35 @@
+CREATE OR REPLACE FUNCTION comp_usuario(id_usuario BIGINT)
+RETURNS TEXT AS $$
+DECLARE
+    v_password        TEXT;
+    v_estado          BOOLEAN;
+    v_secion          BOOLEAN;
+    v_ultima_actividad TIMESTAMP;
+BEGIN
+    SELECT password, estado, secion, ultima_actividad
+    INTO v_password, v_estado, v_secion, v_ultima_actividad
+    FROM tbl_usuario
+    WHERE id = id_usuario;
+
+    IF v_password IS NULL THEN
+        RETURN 'ERROR|Credenciales Invalidas';
+    END IF;
+
+    IF v_estado = FALSE THEN
+        RETURN 'ERROR|Credenciales Invalidas';
+    END IF;
+
+    -- Si hay sesión activa verificar si expiró
+    IF v_secion = TRUE THEN
+        IF v_ultima_actividad < NOW() - INTERVAL '1 minutes' THEN
+            -- Sesión expirada, limpiarla y permitir login
+            UPDATE tbl_usuario SET secion = FALSE WHERE id = id_usuario;
+        ELSE
+            -- Sesión real activa
+            RETURN 'ERROR|La sesión está activa';
+        END IF;
+    END IF;
+
+    RETURN 'OK|' || v_password;
+END;
+$$ LANGUAGE plpgsql;

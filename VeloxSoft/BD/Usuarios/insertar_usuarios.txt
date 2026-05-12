@@ -1,0 +1,41 @@
+CREATE OR REPLACE FUNCTION insertar_usuario(
+    id_p       BIGINT,
+    nombre_p   CHARACTER VARYING(50),
+    password_p CHARACTER VARYING(250),
+    tipo_p     rol,
+    estado_p   BOOLEAN
+)
+RETURNS TEXT
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Validar si el usuario ya existe
+    IF EXISTS (
+        SELECT 1
+        FROM TBL_USUARIO u
+        WHERE u.id = id_p
+    ) THEN
+        RETURN 'ERROR|El usuario ya existe';
+    END IF;
+
+    -- Insertar usuario con secion = FALSE por defecto
+    INSERT INTO TBL_USUARIO (
+        id,
+        nombre,
+        password,
+        tipo,
+        secion,
+        estado
+    )
+    VALUES (
+        id_p,
+        nombre_p,
+        password_p,
+        tipo_p,
+        FALSE,
+        estado_p
+    );
+
+    RETURN 'OK|Usuario agregado correctamente';
+END;
+$$;

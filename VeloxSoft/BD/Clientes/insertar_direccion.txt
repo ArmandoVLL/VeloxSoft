@@ -1,0 +1,36 @@
+CREATE OR REPLACE FUNCTION insertar_direccion(
+    num_casa_p      CHARACTER VARYING(45),
+    calle_p         CHARACTER VARYING(45),
+    cruzamientos_p  CHARACTER VARYING(45),
+    referencia_p    CHARACTER VARYING(200),
+    colonia_d_p     INTEGER
+)
+RETURNS TEXT AS $$
+BEGIN
+    -- Validar si la colonia existe
+    IF NOT EXISTS (
+        SELECT 1
+        FROM TBL_COLONIA c
+        WHERE c.idcolonia = colonia_d_p
+    ) THEN
+        RETURN 'ERROR|La colonia no existe';
+    END IF;
+
+    INSERT INTO TBL_DIRECCION (
+        num_casa,
+        calle,
+        cruzamientos,
+        referencia,
+        colonia_d
+    )
+    VALUES (
+        num_casa_p,
+        calle_p,
+        cruzamientos_p,
+        referencia_p,
+        colonia_d_p
+    );
+
+    RETURN 'OK|Dirección agregada correctamente';
+END;
+$$ LANGUAGE plpgsql;

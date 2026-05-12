@@ -1,0 +1,34 @@
+CREATE OR REPLACE FUNCTION actualizar_producto(
+    id_producto_p   CHARACTER VARYING(30),
+    nombre_p        CHARACTER VARYING(100),
+    cantidad_p      NUMERIC(10,4),
+    precio_p        NUMERIC(10,4),
+    id_categoria_p  CHARACTER VARYING(4),
+    estado_p        BOOLEAN
+)
+RETURNS TEXT
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Validar si el producto existe
+    IF NOT EXISTS (
+        SELECT 1
+        FROM TBL_PRODUCTO t
+        WHERE t.id_producto = id_producto_p
+    ) THEN
+        RETURN 'ERROR|El producto no existe';
+    END IF;
+
+    -- Actualizar producto
+    UPDATE TBL_PRODUCTO
+    SET
+        nombre       = nombre_p,
+        cantidad     = cantidad_p,
+        precio       = precio_p,
+        id_categoria = id_categoria_p,
+        estado       = estado_p
+    WHERE id_producto = id_producto_p;
+
+    RETURN 'OK|Producto actualizado correctamente';
+END;
+$$;
