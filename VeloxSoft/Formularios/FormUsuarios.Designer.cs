@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             pnlUsuarios = new Panel();
             pnlBotones = new Panel();
             cbCESTADO = new ComboBox();
@@ -47,6 +49,7 @@
             colSesion = new DataGridViewTextBoxColumn();
             colEstado = new DataGridViewTextBoxColumn();
             pnlFormulario = new Panel();
+            LabelError2 = new Label();
             ID_actual = new TextBox();
             textRol = new ComboBox();
             btnEliminar = new Button();
@@ -211,7 +214,7 @@
             pnlBD.Controls.Add(dgvUsuariosDB);
             pnlBD.Location = new Point(563, 142);
             pnlBD.Name = "pnlBD";
-            pnlBD.Size = new Size(790, 543);
+            pnlBD.Size = new Size(790, 504);
             pnlBD.TabIndex = 1;
             pnlBD.Paint += pnlBD_Paint;
             pnlBD.Resize += pnlBD_Resize;
@@ -223,17 +226,39 @@
             dgvUsuariosDB.AllowUserToResizeRows = false;
             dgvUsuariosDB.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvUsuariosDB.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvUsuariosDB.BackgroundColor = SystemColors.ButtonFace;
+            dgvUsuariosDB.BackgroundColor = Color.White;
             dgvUsuariosDB.BorderStyle = BorderStyle.None;
-            dgvUsuariosDB.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvUsuariosDB.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dgvUsuariosDB.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(234, 243, 222);
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = Color.FromArgb(85, 125, 70);
+            dataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(234, 243, 222);
+            dataGridViewCellStyle1.SelectionForeColor = Color.FromArgb(85, 125, 70);
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvUsuariosDB.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dgvUsuariosDB.ColumnHeadersHeight = 45;
             dgvUsuariosDB.Columns.AddRange(new DataGridViewColumn[] { colID, colNombre, colRol, colSesion, colEstado });
-            dgvUsuariosDB.Location = new Point(47, 6);
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.White;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 10F);
+            dataGridViewCellStyle2.ForeColor = Color.FromArgb(80, 80, 80);
+            dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(245, 245, 245);
+            dataGridViewCellStyle2.SelectionForeColor = Color.FromArgb(80, 80, 80);
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvUsuariosDB.DefaultCellStyle = dataGridViewCellStyle2;
+            dgvUsuariosDB.EnableHeadersVisualStyles = false;
+            dgvUsuariosDB.GridColor = Color.FromArgb(235, 235, 235);
+            dgvUsuariosDB.Location = new Point(3, 3);
+            dgvUsuariosDB.MultiSelect = false;
             dgvUsuariosDB.Name = "dgvUsuariosDB";
             dgvUsuariosDB.ReadOnly = true;
             dgvUsuariosDB.RowHeadersVisible = false;
             dgvUsuariosDB.RowHeadersWidth = 51;
+            dgvUsuariosDB.RowTemplate.Height = 50;
             dgvUsuariosDB.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvUsuariosDB.Size = new Size(725, 507);
+            dgvUsuariosDB.Size = new Size(784, 468);
             dgvUsuariosDB.TabIndex = 0;
             dgvUsuariosDB.CellContentClick += dgvUsuariosDB_CellContentClick;
             dgvUsuariosDB.Click += dgvUsuariosDB_Click;
@@ -241,53 +266,48 @@
             // 
             // colID
             // 
-            colID.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            colID.FillWeight = 60F;
             colID.HeaderText = "ID";
-            colID.MinimumWidth = 6;
+            colID.MinimumWidth = 8;
             colID.Name = "colID";
             colID.ReadOnly = true;
-            colID.Width = 53;
             // 
             // colNombre
             // 
-            colNombre.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            colNombre.FillWeight = 150F;
             colNombre.HeaderText = "Nombre";
             colNombre.MinimumWidth = 6;
             colNombre.Name = "colNombre";
             colNombre.ReadOnly = true;
-            colNombre.Width = 93;
             // 
             // colRol
             // 
-            colRol.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            colRol.FillWeight = 90F;
             colRol.HeaderText = "Rol";
             colRol.MinimumWidth = 6;
             colRol.Name = "colRol";
             colRol.ReadOnly = true;
-            colRol.Width = 60;
             // 
             // colSesion
             // 
-            colSesion.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             colSesion.HeaderText = "Sesion";
             colSesion.MinimumWidth = 6;
             colSesion.Name = "colSesion";
             colSesion.ReadOnly = true;
-            colSesion.Width = 81;
             // 
             // colEstado
             // 
-            colEstado.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            colEstado.FillWeight = 80F;
             colEstado.HeaderText = "Estado";
             colEstado.MinimumWidth = 6;
             colEstado.Name = "colEstado";
             colEstado.ReadOnly = true;
-            colEstado.Width = 83;
             // 
             // pnlFormulario
             // 
             pnlFormulario.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             pnlFormulario.BackColor = Color.White;
+            pnlFormulario.Controls.Add(LabelError2);
             pnlFormulario.Controls.Add(ID_actual);
             pnlFormulario.Controls.Add(textRol);
             pnlFormulario.Controls.Add(btnEliminar);
@@ -307,6 +327,17 @@
             pnlFormulario.TabIndex = 0;
             pnlFormulario.Paint += pnlFormulario_Paint;
             pnlFormulario.Resize += pnlFormulario_Resize;
+            // 
+            // LabelError2
+            // 
+            LabelError2.ForeColor = Color.Red;
+            LabelError2.Location = new Point(17, 400);
+            LabelError2.Name = "LabelError2";
+            LabelError2.Size = new Size(445, 21);
+            LabelError2.TabIndex = 58;
+            LabelError2.Text = "LabelError";
+            LabelError2.TextAlign = ContentAlignment.TopCenter;
+            LabelError2.Visible = false;
             // 
             // ID_actual
             // 
@@ -331,7 +362,7 @@
             textRol.Items.AddRange(new object[] { "Administrador", "Cajero" });
             textRol.Location = new Point(101, 273);
             textRol.Name = "textRol";
-            textRol.Size = new Size(118, 28);
+            textRol.Size = new Size(300, 28);
             textRol.TabIndex = 51;
             // 
             // btnEliminar
@@ -504,12 +535,6 @@
         private Label lblNombre;
         private TextBox textID;
         private Label lblID;
-        private DataGridView dgvUsuariosDB;
-        private DataGridViewTextBoxColumn colID;
-        private DataGridViewTextBoxColumn colNombre;
-        private DataGridViewTextBoxColumn colRol;
-        private DataGridViewTextBoxColumn colSesion;
-        private DataGridViewTextBoxColumn colEstado;
         private Panel pnlBotones;
         private Button btnGuardar;
         private Button btnLimpiar;
@@ -525,5 +550,12 @@
         private ComboBox cbCROL;
         private ComboBox textRol;
         private TextBox ID_actual;
+        private DataGridView dgvUsuariosDB;
+        private DataGridViewTextBoxColumn colID;
+        private DataGridViewTextBoxColumn colNombre;
+        private DataGridViewTextBoxColumn colRol;
+        private DataGridViewTextBoxColumn colSesion;
+        private DataGridViewTextBoxColumn colEstado;
+        private Label LabelError2;
     }
 }

@@ -160,6 +160,7 @@
             dtgBDInv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dtgBDInv.Size = new Size(783, 466);
             dtgBDInv.TabIndex = 0;
+            dtgBDInv.CellContentClick += dtgBDInv_CellContentClick;
             dtgBDInv.DoubleClick += dtgBDInv_DoubleClick;
             // 
             // colID
@@ -545,13 +546,13 @@
             lblID.TabIndex = 40;
             lblID.Text = "ID";
             // 
-            // FormInventarioP
+            // FormInventario
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1297, 606);
             Controls.Add(pnlInventario);
-            Name = "FormInventarioP";
+            Name = "FormInventario";
             Text = "FormInventarioP";
             Load += FormInventarioP_Load;
             pnlInventario.ResumeLayout(false);

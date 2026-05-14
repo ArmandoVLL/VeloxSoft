@@ -19,7 +19,7 @@ namespace VeloxSoft.Formularios
         public FormInventario(ServicioInventario ServicioInventario)
         {
             InitializeComponent();
-            _ServicioInventario = ServicioInventario;   
+            _ServicioInventario = ServicioInventario;
             this.ResizeRedraw = true;
             this.ResizeRedraw = true;
             // Evita el efecto de "congelado" o parpadeo
@@ -28,7 +28,7 @@ namespace VeloxSoft.Formularios
             pnlFormulario_Resize(this, EventArgs.Empty);
             pnlBotones_Resize(this, EventArgs.Empty);
             pnlDB_Resize(this, EventArgs.Empty);
- 
+
         }
 
 
@@ -907,7 +907,10 @@ namespace VeloxSoft.Formularios
             CargarInventario(lista);
         }
 
+        private void dtgBDInv_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
 
+        }
     }
 
 }

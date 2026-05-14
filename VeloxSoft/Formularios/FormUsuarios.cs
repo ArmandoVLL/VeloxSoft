@@ -329,6 +329,7 @@ namespace VeloxSoft.Formularios
             pnlUsuarios_Resize(this, EventArgs.Empty); // ← AGREGA
             pnlFormulario_Resize(this, EventArgs.Empty);
             pnlBotones_Resize(this, EventArgs.Empty);
+            pnlBD_Resize(this, EventArgs.Empty);
         }
 
         //Diseño estetico de esteticos y botonoes
@@ -441,11 +442,15 @@ namespace VeloxSoft.Formularios
             textNombre.Size = new Size(anchoInput, altoInput);
 
             int yFilaDoble = textNombre.Bottom + espacioEntreGrupos;
-            int anchoMedio = (anchoInput - 15) / 2;
-            lblRol.Location = new Point(margenGral, yFilaDoble);
-            textRol.Location = new Point(margenGral, yFilaDoble + altoLabel + 2);
-            textRol.Size = new Size(anchoMedio, altoInput);
 
+            lblRol.Location = new Point(margenGral, yFilaDoble);
+
+            textRol.Location = new Point(
+                margenGral,
+                yFilaDoble + altoLabel + 2
+            );
+
+            textRol.Size = new Size(anchoInput, altoInput);
             int yContra = textRol.Bottom + espacioEntreGrupos;
             lblContraseña.Location = new Point(margenGral, yContra);
             textContra.Location = new Point(margenGral, yContra + altoLabel + 2);
@@ -481,95 +486,170 @@ namespace VeloxSoft.Formularios
         {
             int w = pnlBotones.Width;
             int h = pnlBotones.Height;
-            int margen = 15;
+
+            int margenH = 15;
             int altoControl = 28;
-            int x = margen;
-            bool dosLineas = w < 700;
+
+            int espacioPequeño = 5;
+            int espacioGrande = 20;
+
+            // Cambia automáticamente a 2 líneas
+            bool dosLineas = w < 750;
 
             if (!dosLineas)
             {
-                // ── UNA LÍNEA ──
+                // ── UNA LÍNEA ─────────────────────────────
                 int y = (h - altoControl) / 2;
 
-                // Anchos proporcionales
-                int anchoLblBusc = 85;
-                int anchoBuscar = (int)(w * 0.20);
-                int anchoBtn = 42;
-                int anchoLblCmb = 45;
-                int anchoCmb = (int)(w * 0.12);
+                // Tamaños reales de labels
+                int anchoLblBuscar = lblBuscarID.PreferredWidth;
+                int anchoBtnBuscar = 42;
 
-                lblBuscarID.Location = new Point(x, y + 4);
-                lblBuscarID.Size = new Size(anchoLblBusc, 20);
-                x += anchoLblBusc + 4;
+                int anchoLblRol = lblCROL.PreferredWidth;
+                int anchoLblSesion = lblCSESION.PreferredWidth;
+                int anchoLblEstado = lblCESTADO.PreferredWidth;
 
-                textBuscarU.Location = new Point(x, y);
-                textBuscarU.Size = new Size(anchoBuscar, altoControl);
-                x += anchoBuscar + 4;
+                // Espacio disponible para inputs
+                int espacioDisponible =
+                    w
+                    - (margenH * 2)
+                    - anchoLblBuscar
+                    - anchoBtnBuscar
+                    - anchoLblRol
+                    - anchoLblSesion
+                    - anchoLblEstado
+                    - (espacioPequeño * 6)
+                    - (espacioGrande * 3);
 
-                btnBuscarU.Location = new Point(x, y);
-                btnBuscarU.Size = new Size(anchoBtn, altoControl);
-                x += anchoBtn + 14;
+                // Repartimos espacio
+                int anchoBuscar = (int)(espacioDisponible * 0.40);
+                int anchoCombo = (int)((espacioDisponible - anchoBuscar) / 3);
 
-                // ROL
-                lblCROL.Location = new Point(x, y + 4);
-                lblCROL.Size = new Size(anchoLblCmb, 20);
-                x += anchoLblCmb + 4;
-                cbCROL.Location = new Point(x, y);
-                cbCROL.Size = new Size(anchoCmb, altoControl);
-                x += anchoCmb + 10;
+                // ── BUSCAR ──
+                lblBuscarID.Location = new Point(margenH, y + 4);
 
-                // SESIÓN
-                lblCSESION.Location = new Point(x, y + 4);
-                lblCSESION.Size = new Size(anchoLblCmb + 10, 20);
-                x += anchoLblCmb + 14;
-                cbCSESION.Location = new Point(x, y);
-                cbCSESION.Size = new Size(anchoCmb, altoControl);
-                x += anchoCmb + 10;
+                textBuscarU.Location =
+                    new Point(lblBuscarID.Right + espacioPequeño, y);
 
-                // ESTADO
-                lblCESTADO.Location = new Point(x, y + 4);
-                lblCESTADO.Size = new Size(anchoLblCmb + 10, 20);
-                x += anchoLblCmb + 14;
-                cbCESTADO.Location = new Point(x, y);
-                cbCESTADO.Size = new Size(w - x - margen, altoControl);
+                textBuscarU.Size =
+                    new Size(anchoBuscar, altoControl);
+
+                btnBuscarU.Location =
+                    new Point(textBuscarU.Right + 2, y);
+
+                btnBuscarU.Size =
+                    new Size(anchoBtnBuscar, altoControl);
+
+                // ── ROL ──
+                lblCROL.Location =
+                    new Point(btnBuscarU.Right + espacioGrande, y + 4);
+
+                cbCROL.Location =
+                    new Point(lblCROL.Right + espacioPequeño, y);
+
+                cbCROL.Size =
+                    new Size(anchoCombo, altoControl);
+
+                // ── SESIÓN ──
+                lblCSESION.Location =
+                    new Point(cbCROL.Right + espacioGrande, y + 4);
+
+                cbCSESION.Location =
+                    new Point(lblCSESION.Right + espacioPequeño, y);
+
+                cbCSESION.Size =
+                    new Size(anchoCombo, altoControl);
+
+                // ── ESTADO ──
+                lblCESTADO.Location =
+                    new Point(cbCSESION.Right + espacioGrande, y + 4);
+
+                cbCESTADO.Location =
+                    new Point(lblCESTADO.Right + espacioPequeño, y);
+
+                cbCESTADO.Size =
+                    new Size(
+                        w - cbCESTADO.Left - margenH,
+                        altoControl
+                    );
             }
             else
             {
-                // ── DOS LÍNEAS ──
-                int anchoTotal = w - margen * 2;
-                int anchoBtn = 42;
-                int anchoCmbPeq = (int)((anchoTotal - 160) / 3);
+                // ── DOS LÍNEAS ────────────────────────────
+                int margenV = 10;
 
-                int y1 = 8;
-                lblBuscarID.Location = new Point(margen, y1 + 4);
-                lblBuscarID.Size = new Size(85, 20);
-                textBuscarU.Location = new Point(margen + 88, y1);
-                textBuscarU.Size = new Size(anchoTotal - 88 - anchoBtn - 6, altoControl);
-                btnBuscarU.Location = new Point(w - margen - anchoBtn, y1);
-                btnBuscarU.Size = new Size(anchoBtn, altoControl);
+                int anchoDisponible = w - (margenH * 2);
 
-                int y2 = y1 + altoControl + 8;
-                int xCmb = margen;
+                int anchoBtnBuscar = 42;
 
-                lblCROL.Location = new Point(xCmb, y2 + 4);
-                lblCROL.Size = new Size(35, 20);
-                xCmb += 38;
-                cbCROL.Location = new Point(xCmb, y2);
-                cbCROL.Size = new Size(anchoCmbPeq, altoControl);
-                xCmb += anchoCmbPeq + 6;
+                // ── FILA 1 : BUSCAR ──
+                int y1 = margenV;
 
-                lblCSESION.Location = new Point(xCmb, y2 + 4);
-                lblCSESION.Size = new Size(48, 20);
-                xCmb += 51;
-                cbCSESION.Location = new Point(xCmb, y2);
-                cbCSESION.Size = new Size(anchoCmbPeq, altoControl);
-                xCmb += anchoCmbPeq + 6;
+                lblBuscarID.Location =
+                    new Point(margenH, y1 + 4);
 
-                lblCESTADO.Location = new Point(xCmb, y2 + 4);
-                lblCESTADO.Size = new Size(48, 20);
-                xCmb += 51;
-                cbCESTADO.Location = new Point(xCmb, y2);
-                cbCESTADO.Size = new Size(w - xCmb - margen, altoControl);
+                int anchoTxtBuscar =
+                    anchoDisponible
+                    - lblBuscarID.Width
+                    - anchoBtnBuscar
+                    - 10;
+
+                textBuscarU.Location =
+                    new Point(lblBuscarID.Right + espacioPequeño, y1);
+
+                textBuscarU.Size =
+                    new Size(anchoTxtBuscar, altoControl);
+
+                btnBuscarU.Location =
+                    new Point(textBuscarU.Right + 2, y1);
+
+                btnBuscarU.Size =
+                    new Size(anchoBtnBuscar, altoControl);
+
+                // ── FILA 2 : COMBOS ──
+                int y2 = y1 + altoControl + 10;
+
+                int anchoGrupo =
+                    (anchoDisponible - (espacioGrande * 2)) / 3;
+
+                // ── ROL ──
+                lblCROL.Location =
+                    new Point(margenH, y2 + 4);
+
+                cbCROL.Location =
+                    new Point(lblCROL.Right + espacioPequeño, y2);
+
+                cbCROL.Size =
+                    new Size(
+                        anchoGrupo - lblCROL.Width,
+                        altoControl
+                    );
+
+                // ── SESIÓN ──
+                lblCSESION.Location =
+                    new Point(cbCROL.Right + espacioGrande, y2 + 4);
+
+                cbCSESION.Location =
+                    new Point(lblCSESION.Right + espacioPequeño, y2);
+
+                cbCSESION.Size =
+                    new Size(
+                        anchoGrupo - lblCSESION.Width,
+                        altoControl
+                    );
+
+                // ── ESTADO ──
+                lblCESTADO.Location =
+                    new Point(cbCSESION.Right + espacioGrande, y2 + 4);
+
+                cbCESTADO.Location =
+                    new Point(lblCESTADO.Right + espacioPequeño, y2);
+
+                cbCESTADO.Size =
+                    new Size(
+                        w - cbCESTADO.Left - margenH,
+                        altoControl
+                    );
             }
 
             pnlBotones.Invalidate();
@@ -579,16 +659,12 @@ namespace VeloxSoft.Formularios
         {
             int w = pnlBD.Width;
             int h = pnlBD.Height;
-            int margen = 15; // Espacio para que no choque con el borde redondeado
+            int margen = 10;
 
-            // Ajustar el DataGridView para que llene el panel
             dgvUsuariosDB.Location = new Point(margen, margen);
-            dgvUsuariosDB.Size = new Size(w - (margen * 2), h - (margen * 2));
+            dgvUsuariosDB.Size = new Size(w - margen * 2, h - margen * 2);
 
-            // Asegurar que las columnas se repartan el ancho
-            dgvUsuariosDB.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-            pnlBD.Invalidate(); // Refresca los bordes redondeados
+            pnlBD.Invalidate();
         }
 
         private void pnlUsuarios_Resize(object sender, EventArgs e)
