@@ -242,7 +242,7 @@ namespace VeloxSoft
         private void IniciarTimer()
         {
             _TimerActividad = new System.Windows.Forms.Timer();
-            _TimerActividad.Interval = 5 * 60 * 1000; // 5 minuto
+            _TimerActividad.Interval = 1 * 30 * 1000; // 30 segundos
             _TimerActividad.Tick += (s, e) =>
             {
                 _ServicioUsuarios.ActualizarActividad(Program.UsuarioLogueado.Id, out _);
